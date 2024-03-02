@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ScapeTheAdds</string>
     <string name="next">Next</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="pick_nickname">Choose a nickname</string>
 </resources>

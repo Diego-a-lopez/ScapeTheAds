@@ -8,6 +8,12 @@
       <entry key="GreetingPreview">
         <State />
       </entry>
+      <entry key="LoginScreenPreview">
+        <State />
+      </entry>
+      <entry key="NicknameScreenPreview">
+        <State />
+      </entry>
     </value>
   </component>
 </project>
