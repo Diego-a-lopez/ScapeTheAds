@@ -1,10 +1,11 @@
 package es.finders.scapetheadds.menu.login
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,24 +18,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.core.content.ContextCompat.startActivity
 import es.finders.scapetheadds.R
+import es.finders.scapetheadds.menu.nickname.Nickname
 import es.finders.scapetheadds.ui.theme.RedPrimary
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
@@ -64,6 +64,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun LoginLayout(modifier: Modifier = Modifier) {
+    val ctx = LocalContext.current
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
@@ -75,7 +76,11 @@ fun LoginLayout(modifier: Modifier = Modifier) {
         Spacer(Modifier.size(16.dp))
         PasswordInput()
         Spacer(Modifier.size(16.dp))
-        NextButton({},
+        NextButton(
+            {
+                Toast.makeText(ctx, "Logged in", Toast.LENGTH_LONG).show()
+                startActivity(ctx, Intent(ctx, Nickname::class.java), null)
+            },
             Modifier
                 .padding(top = 5.dp, bottom = 20.dp)
                 .fillMaxWidth(0.70f)

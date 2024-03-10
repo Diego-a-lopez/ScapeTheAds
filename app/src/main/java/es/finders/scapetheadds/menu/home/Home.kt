@@ -1,10 +1,18 @@
 package es.finders.scapetheadds.menu.home
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -17,10 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import es.finders.scapetheadds.menu.level.Level
 import es.finders.scapetheadds.ui.theme.RedPrimary
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
@@ -60,6 +71,7 @@ fun HomeLayout(modifier: Modifier = Modifier) {
         BottomButtonsSection()
     }
 }
+
 @Composable
 fun OutlineTextSection(text: String) {
     Box(
@@ -67,7 +79,7 @@ fun OutlineTextSection(text: String) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = text ,
+            text = text,
             modifier = Modifier.padding(horizontal = 16.dp),
             textAlign = TextAlign.Center,
             style = LocalTextStyle.current.merge(
@@ -91,8 +103,10 @@ fun OutlineTextSection(text: String) {
         )
     }
 }
+
 @Composable
 fun BottomButtonsSection() {
+    val ctx = LocalContext.current
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
         .fillMaxWidth()
@@ -101,7 +115,10 @@ fun BottomButtonsSection() {
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        ButtonItem(text = "Jugar", {}, buttonModifier)
+        ButtonItem(text = "Jugar", {
+            Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
+            ContextCompat.startActivity(ctx, Intent(ctx, Level::class.java), null)
+        }, buttonModifier)
         ButtonItem(text = "Selección de Niveles", {}, buttonModifier)
         ButtonItem(text = "Puntuación Local", {}, buttonModifier)
         ButtonItem(text = "Puntuación Global", {}, buttonModifier)
@@ -120,7 +137,8 @@ fun ButtonItem(text: String, onClick: () -> Unit, modifier: Modifier) {
         border = BorderStroke(1.dp, Color.Black),
         colors = ButtonDefaults.buttonColors(
             containerColor = RedPrimary
-        )) {
+        )
+    ) {
         Text(text = text)
     }
 }
