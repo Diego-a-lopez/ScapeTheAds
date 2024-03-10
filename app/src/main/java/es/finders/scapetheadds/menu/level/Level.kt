@@ -1,5 +1,6 @@
 package es.finders.scapetheadds.menu.level
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import com.unity3d.player.UnityPlayerActivity
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
 
@@ -17,7 +20,11 @@ class Level : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ScapeTheAddsTheme {
-                LevelScreen()
+                ContextCompat.startActivity(
+                    this,
+                    Intent(this, UnityPlayerActivity::class.java),
+                    null
+                )
             }
         }
     }

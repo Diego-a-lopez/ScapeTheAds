@@ -4,4 +4,5 @@
     <string name="password">Password</string>
     <string name="email">Email</string>
     <string name="pick_nickname">Choose a nickname</string>
+    <string name="game_view_content_description" translatable="false">Game view</string>
 </resources>
