@@ -4,12 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,17 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import es.finders.scapetheadds.menu.login.LoginLayout
-import es.finders.scapetheadds.ui.theme.RedPrimary
+import es.finders.scapetheadds.R
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
+import es.finders.scapetheadds.ui.utils.BackButton
 import es.finders.scapetheadds.ui.utils.BasicBackground
+import es.finders.scapetheadds.ui.utils.OutlineTextSection
 
 class Leaderboard : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,16 +51,12 @@ fun LeaderboardScreen(modifier: Modifier = Modifier) {
         LeaderboardLayout(modifier.fillMaxSize())
     }
 }
+
 @Composable
 fun LeaderboardLayout(modifier: Modifier = Modifier) {
     // Variables for styling
-    val textTitle = "Puntuación Global"
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val titleTextOutlineColor = MaterialTheme.colorScheme.onSecondary
-
     val containerColor = MaterialTheme.colorScheme.surface
     val containerOutlineColor = MaterialTheme.colorScheme.onSurface
-    val containerElevation = 4.dp
 
     Column(
         modifier = Modifier
@@ -70,54 +67,11 @@ fun LeaderboardLayout(modifier: Modifier = Modifier) {
         // Upper Left Arrow to go back to home screen
         BackButton()
 
-        OutlineTextSection("Puntuación Global")
+        OutlineTextSection(stringResource(R.string.global_scores))
 
         // Container for user info rows
         UserInfoContainer(containerColor, containerOutlineColor)
     }
-}
-@Composable
-fun OutlineTextSection(text: String) {
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            textAlign = TextAlign.Center,
-            style = LocalTextStyle.current.merge(
-                TextStyle(
-                    color = RedPrimary, // Set to primary color
-                    fontSize = MaterialTheme.typography.displaySmall.fontSize,
-                )
-            ),
-        )
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            textAlign = TextAlign.Center,
-            style = LocalTextStyle.current.merge(
-                TextStyle(
-                    color = Color.Black, // Set to primary color
-                    fontSize = MaterialTheme.typography.displaySmall.fontSize,
-                    drawStyle = Stroke(width = 4f, join = StrokeJoin.Round)
-                )
-            )
-        )
-    }
-}
-@Composable
-fun BackButton() {
-    Icon(
-        imageVector = Icons.Default.ArrowBack,
-        contentDescription = "Back",
-        modifier = Modifier
-            .size(48.dp)
-            .clickable {
-                // Handle navigation back to home screen
-            }
-    )
 }
 
 @Composable
@@ -134,6 +88,7 @@ fun UserInfoContainer(containerColor: Color, containerOutlineColor: Color) {
         // Add more users as needed
     }
 }
+
 @Composable
 fun UserInfoRow(
     userName: String,
@@ -162,7 +117,7 @@ fun UserInfoRow(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = false, showSystemUi = true)
 @Composable
 private fun LeaderboardScreenPreview() {
     ScapeTheAddsTheme {

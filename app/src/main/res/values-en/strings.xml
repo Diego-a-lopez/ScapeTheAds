@@ -5,4 +5,11 @@
     <string name="password">Password</string>
     <string name="email">Email</string>
     <string name="pick_nickname">Choose a nickname</string>
+    <string name="play">Play</string>
+    <string name="select_level">Select Level</string>
+    <string name="local_scores">Local Scores</string>
+    <string name="global_scores">Global Scores</string>
+    <string name="level_completed">"You've completed \n\n the level "</string>
+    <string name="you_lose">You Lost</string>
+    <string name="level_selection">"Level \n selection"</string>
 </resources>
