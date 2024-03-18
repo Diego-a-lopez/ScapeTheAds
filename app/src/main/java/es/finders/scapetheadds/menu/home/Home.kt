@@ -1,5 +1,6 @@
 package es.finders.scapetheadds.menu.home
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import es.finders.scapetheadds.R
 import es.finders.scapetheadds.menu.level.Level
+import es.finders.scapetheadds.menu.levelselector.LevelSelector
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.ButtonItem
@@ -52,6 +54,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun HomeLayout(modifier: Modifier = Modifier) {
+    val ctx = LocalContext.current
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceAround,
@@ -62,13 +65,12 @@ fun HomeLayout(modifier: Modifier = Modifier) {
             textSize = MaterialTheme.typography.displayMedium.fontSize
         )
         Logo()
-        BottomButtonsSection()
+        BottomButtonsSection(ctx)
     }
 }
 
 @Composable
-fun BottomButtonsSection() {
-    val ctx = LocalContext.current
+fun BottomButtonsSection(ctx: Context) {
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
         .fillMaxWidth()
@@ -81,7 +83,10 @@ fun BottomButtonsSection() {
             Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, Level::class.java), null)
         }, buttonModifier)
-        ButtonItem(text = stringResource(R.string.select_level), {}, buttonModifier)
+        ButtonItem(text = stringResource(R.string.select_level),  {
+            Toast.makeText(ctx, "Selecting level", Toast.LENGTH_LONG).show()
+            ContextCompat.startActivity(ctx, Intent(ctx, LevelSelector::class.java), null)
+        }, buttonModifier)
         ButtonItem(text = stringResource(R.string.local_scores), {}, buttonModifier)
         ButtonItem(text = stringResource(R.string.global_scores), {}, buttonModifier)
     }
