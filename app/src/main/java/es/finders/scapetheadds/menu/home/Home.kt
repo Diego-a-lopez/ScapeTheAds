@@ -3,7 +3,6 @@ package es.finders.scapetheadds.menu.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -80,11 +79,9 @@ fun BottomButtonsSection(ctx: Context) {
             .padding(horizontal = 16.dp)
     ) {
         ButtonItem(text = stringResource(R.string.play), {
-            Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, Level::class.java), null)
         }, buttonModifier)
-        ButtonItem(text = stringResource(R.string.select_level),  {
-            Toast.makeText(ctx, "Selecting level", Toast.LENGTH_LONG).show()
+        ButtonItem(text = stringResource(R.string.select_level), {
             ContextCompat.startActivity(ctx, Intent(ctx, LevelSelector::class.java), null)
         }, buttonModifier)
         ButtonItem(text = stringResource(R.string.local_scores), {}, buttonModifier)
