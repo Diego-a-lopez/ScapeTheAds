@@ -2,7 +2,6 @@ package es.finders.scapetheadds.menu.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -73,7 +72,6 @@ fun LoginLayout(modifier: Modifier = Modifier) {
         ButtonItem(
             stringResource(R.string.next),
             {
-                Toast.makeText(ctx, "Logged in", Toast.LENGTH_LONG).show()
                 startActivity(ctx, Intent(ctx, Nickname::class.java), null)
             },
             Modifier

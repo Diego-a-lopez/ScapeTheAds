@@ -2,7 +2,6 @@ package es.finders.scapetheadds.menu.Defeat
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -29,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import es.finders.scapetheadds.R
-import es.finders.scapetheadds.menu.login.Login
+import es.finders.scapetheadds.menu.home.Home
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.ButtonItem
@@ -80,8 +79,7 @@ fun DefeatLayout(modifier: Modifier = Modifier) {
         ButtonItem(
             stringResource(R.string.next),
             {
-                Toast.makeText(ctx, "Back to home", Toast.LENGTH_LONG).show()
-                ContextCompat.startActivity(ctx, Intent(ctx, Login::class.java), null)
+                ContextCompat.startActivity(ctx, Intent(ctx, Home::class.java), null)
             },
             Modifier
                 .padding(top = 5.dp, bottom = 20.dp)

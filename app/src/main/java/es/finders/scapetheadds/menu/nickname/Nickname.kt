@@ -2,7 +2,6 @@ package es.finders.scapetheadds.menu.nickname
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -67,9 +66,9 @@ fun NicknameLayout(modifier: Modifier = Modifier) {
         Spacer(Modifier.size(150.dp))
         NicknameInput()
         Spacer(Modifier.size(16.dp))
-        ButtonItem(stringResource(R.string.next),
+        ButtonItem(
+            stringResource(R.string.next),
             {
-                Toast.makeText(ctx, "Nickname chosen", Toast.LENGTH_LONG).show()
                 ContextCompat.startActivity(ctx, Intent(ctx, Home::class.java), null)
             },
             Modifier
