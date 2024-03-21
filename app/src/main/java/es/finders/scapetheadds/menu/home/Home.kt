@@ -22,8 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import es.finders.scapetheadds.R
+import es.finders.scapetheadds.menu.leaderboard.Leaderboard
 import es.finders.scapetheadds.menu.level.Level
 import es.finders.scapetheadds.menu.levelselector.LevelSelector
+import es.finders.scapetheadds.menu.settings.SettingsActivity
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.ButtonItem
@@ -83,12 +85,36 @@ fun BottomButtonsSection(ctx: Context) {
             Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, Level::class.java), null)
         }, buttonModifier)
-        ButtonItem(text = stringResource(R.string.select_level),  {
+        ButtonItem(text = stringResource(R.string.select_level), {
             Toast.makeText(ctx, "Selecting level", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, LevelSelector::class.java), null)
         }, buttonModifier)
-        ButtonItem(text = stringResource(R.string.local_scores), {}, buttonModifier)
-        ButtonItem(text = stringResource(R.string.global_scores), {}, buttonModifier)
+        val localtext = stringResource(R.string.local_scores)
+        ButtonItem(text = localtext, {
+            Toast.makeText(ctx, "Going to local scores", Toast.LENGTH_LONG).show()
+            ContextCompat.startActivity(
+                ctx,
+                Intent(ctx, Leaderboard::class.java).apply {
+                    putExtra("scoresType", localtext)
+                },
+                null
+            )
+        }, buttonModifier)
+        val globaltext = stringResource(R.string.global_scores)
+        ButtonItem(text = globaltext, {
+            Toast.makeText(ctx, "Going to global scores", Toast.LENGTH_LONG).show()
+            ContextCompat.startActivity(
+                ctx,
+                Intent(ctx, Leaderboard::class.java).apply {
+                    putExtra("scoresType", globaltext)
+                },
+                null
+            )
+        }, buttonModifier)
+        ButtonItem(text = stringResource(R.string.settings), {
+            Toast.makeText(ctx, "Goint to settings", Toast.LENGTH_LONG).show()
+            ContextCompat.startActivity(ctx, Intent(ctx, SettingsActivity::class.java), null)
+        }, buttonModifier)
     }
 }
 

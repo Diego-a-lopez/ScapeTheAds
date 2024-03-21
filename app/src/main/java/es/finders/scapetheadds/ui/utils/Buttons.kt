@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -41,14 +42,31 @@ fun ButtonItem(text: String, onClick: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun BackButton() {
+fun BackButton(
+    onClick: () -> Unit, modifier: Modifier = Modifier
+        .size(48.dp)
+) {
     Icon(
         imageVector = Icons.Default.ArrowBack,
         contentDescription = "Back",
-        modifier = Modifier
-            .size(48.dp)
-            .clickable {
-                // Handle navigation back to home screen
-            }
+        modifier = modifier.clickable {
+            onClick()
+        }
+    )
+}
+
+
+@Composable
+fun SettingsButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+        .size(48.dp)
+) {
+    Icon(
+        imageVector = Icons.Default.Settings, // Use the settings icon
+        contentDescription = "Settings",
+        modifier = modifier.clickable {
+            onClick()
+        }
     )
 }

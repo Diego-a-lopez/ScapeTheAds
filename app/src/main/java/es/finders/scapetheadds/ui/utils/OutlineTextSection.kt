@@ -24,11 +24,12 @@ fun OutlineTextSection(
     textAlign: TextAlign = TextAlign.Center,
     textColor: Color = RedPrimary, // default color for main text
     outlineTextColor: Color = Color.Black, // default color for outline text
-    textSize: TextUnit = MaterialTheme.typography.displaySmall.fontSize // default size
+    textSize: TextUnit = MaterialTheme.typography.displaySmall.fontSize, // default size
+    contentAlignment: Alignment = Alignment.Center
 ) {
     Box(
         modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+        contentAlignment = contentAlignment
     ) {
         Text(
             text = text,
