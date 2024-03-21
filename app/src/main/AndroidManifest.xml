@@ -30,6 +30,9 @@
         <activity android:name="es.finders.scapetheadds.menu.levelselector.LevelSelector" />
         <activity android:name="es.finders.scapetheadds.menu.Victory.Victory" />
         <activity android:name="es.finders.scapetheadds.menu.Defeat.Defeat" />
+        <activity android:name="es.finders.scapetheadds.menu.leaderboard.Leaderboard" />
+        <activity android:name="es.finders.scapetheadds.menu.settings.SettingsActivity" />
+        <activity android:name="es.finders.scapetheadds.menu.highscores.Highscores" />
     </application>
 
 </manifest>

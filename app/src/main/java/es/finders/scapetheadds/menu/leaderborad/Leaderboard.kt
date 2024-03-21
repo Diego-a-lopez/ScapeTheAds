@@ -3,7 +3,6 @@ package es.finders.scapetheadds.menu.leaderboard
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -40,7 +39,8 @@ class Leaderboard : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val scoresType = intent.getStringExtra("scoresType") ?: stringResource(R.string.global_scores)
+            val scoresType =
+                intent.getStringExtra("scoresType") ?: stringResource(R.string.global_scores)
             //val scoresType = stringResource(R.string.global_scores)
             ScapeTheAddsTheme {
                 LeaderboardScreen(scoresType)
@@ -75,7 +75,6 @@ fun LeaderboardLayout(ctx: Context, scoresType: String, modifier: Modifier = Mod
     ) {
         // Upper Left Arrow to go back to home screen
         BackButton({
-            Toast.makeText(ctx, "Going back to home screen", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, Home::class.java), null)
         })
 

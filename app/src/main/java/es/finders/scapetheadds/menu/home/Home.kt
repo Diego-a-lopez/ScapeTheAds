@@ -84,12 +84,10 @@ fun BottomButtonsSection(ctx: Context) {
             Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
         }, buttonModifier)
         ButtonItem(text = stringResource(R.string.select_level), {
-            Toast.makeText(ctx, "Selecting level", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, LevelSelector::class.java), null)
         }, buttonModifier)
         val localtext = stringResource(R.string.local_scores)
         ButtonItem(text = localtext, {
-            Toast.makeText(ctx, "Going to local scores", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(
                 ctx,
                 Intent(ctx, Leaderboard::class.java).apply {
@@ -100,7 +98,6 @@ fun BottomButtonsSection(ctx: Context) {
         }, buttonModifier)
         val globaltext = stringResource(R.string.global_scores)
         ButtonItem(text = globaltext, {
-            Toast.makeText(ctx, "Going to global scores", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(
                 ctx,
                 Intent(ctx, Leaderboard::class.java).apply {
@@ -110,7 +107,6 @@ fun BottomButtonsSection(ctx: Context) {
             )
         }, buttonModifier)
         ButtonItem(text = stringResource(R.string.settings), {
-            Toast.makeText(ctx, "Goint to settings", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, SettingsActivity::class.java), null)
         }, buttonModifier)
     }

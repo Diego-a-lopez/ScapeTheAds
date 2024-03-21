@@ -68,7 +68,6 @@ fun SettingsScreenLayout(modifier: Modifier = Modifier) {
 
         ) {
         BackButton({
-            Toast.makeText(ctx, "Going back to home screen", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(ctx, Intent(ctx, Home::class.java), null)
         })
         OutlineTextSection(
@@ -147,7 +146,8 @@ fun VolumeSettings(ctx: Context) {
     Column {
         Slider(
             value = sliderPosition,
-            onValueChange = { sliderPosition = it
+            onValueChange = {
+                sliderPosition = it
                 Toast.makeText(ctx, "Volume changed", Toast.LENGTH_LONG).show()
             }
         )
