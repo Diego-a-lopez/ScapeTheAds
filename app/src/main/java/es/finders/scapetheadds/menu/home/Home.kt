@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import es.finders.scapetheadds.R
 import es.finders.scapetheadds.menu.leaderboard.Leaderboard
-import es.finders.scapetheadds.menu.level.Level
 import es.finders.scapetheadds.menu.levelselector.LevelSelector
 import es.finders.scapetheadds.menu.settings.SettingsActivity
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
@@ -83,7 +82,6 @@ fun BottomButtonsSection(ctx: Context) {
     ) {
         ButtonItem(text = stringResource(R.string.play), {
             Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
-            ContextCompat.startActivity(ctx, Intent(ctx, Level::class.java), null)
         }, buttonModifier)
         ButtonItem(text = stringResource(R.string.select_level), {
             Toast.makeText(ctx, "Selecting level", Toast.LENGTH_LONG).show()
