@@ -4,30 +4,29 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.PrintWriter
+import org.json.JSONObject
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.ServerSocket
 import java.net.Socket
 
 class UnityBridge : Service() {
 
     private val TAG = "UnityBridge"
-    private val PORT = 8189
-
-    private lateinit var serverSocket: ServerSocket
-    private lateinit var clientSocket: Socket
-    private lateinit var out: PrintWriter
-    private lateinit var inStream: BufferedReader
+    private val PORT = 8080
 
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Service onCreate")
-        startSocketServer()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "Service onStartCommand")
+
+        // Start the server in a separate thread
+        Thread { startServer() }.start()
+
         return START_STICKY
     }
 
@@ -35,41 +34,47 @@ class UnityBridge : Service() {
         TODO("Return the communication channel to the service.")
     }
 
-    private fun startSocketServer() {
-        Thread {
-            try {
-                serverSocket = ServerSocket(PORT)
-                Log.d(TAG, "Server listening on port $PORT")
+    private fun startServer() {
+        try {
+            val serverSocket = ServerSocket(PORT)
+            Log.d(TAG, "Server listening on port $PORT")
 
-                clientSocket = serverSocket.accept()
-                out = PrintWriter(clientSocket.getOutputStream(), true)
-                inStream = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
+            while (true) {
+                val clientSocket = serverSocket.accept()
+                Log.d(TAG, "Client connected: ${clientSocket.inetAddress}")
 
-                // Preload the initial message (choose either infinite mode or level mode)
-                val initialMessage = "{\"gamemode\": \"infinite\"}"
-                out.println(initialMessage)
-
-                // Listen for incoming messages
-                while (true) {
-                    val receivedMessage = inStream.readLine()
-                    if (receivedMessage != null) {
-                        Log.d(TAG, "Received: $receivedMessage")
-                        // Handle the received message (e.g., parse JSON, trigger actions)
-                    }
+                // Send data to the client
+                val dataToSend = JSONObject().apply {
+                    put("gamemode", "infinite")
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error in socket server: ${e.message}")
+                sendData(clientSocket, dataToSend.toString())
+
+                // Receive data from the client
+                val receivedData = receiveData(clientSocket)
+                Log.d(TAG, "Received data: $receivedData")
+
+                clientSocket.close()
             }
-        }.start()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun sendData(socket: Socket, data: String) {
+        val outputStream: OutputStream = socket.getOutputStream()
+        outputStream.write(data.toByteArray())
+        outputStream.flush()
+    }
+
+    private fun receiveData(socket: Socket): String {
+        val inputStream: InputStream = socket.getInputStream()
+        val buffer = ByteArray(1024)
+        val bytesRead = inputStream.read(buffer)
+        return String(buffer, 0, bytesRead)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            serverSocket.close()
-            clientSocket.close()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error closing sockets: ${e.message}")
-        }
+        Log.d(TAG, "Service onDestroy")
     }
 }
