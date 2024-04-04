@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.unity3d.player.UnityPlayerActivity
 import es.finders.scapetheadds.R
 import es.finders.scapetheadds.menu.leaderboard.Leaderboard
 import es.finders.scapetheadds.menu.levelselector.LevelSelector
@@ -29,7 +30,7 @@ import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.ButtonItem
 import es.finders.scapetheadds.ui.utils.Logo
-import es.finders.scapetheadds.ui.utils.OutlineTextSection
+import es.finders.scapetheadds.ui.utils.Title
 
 class Home : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,10 +62,7 @@ fun HomeLayout(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlineTextSection(
-            "Scape The Adds",
-            textSize = MaterialTheme.typography.displayMedium.fontSize
-        )
+        Title(Modifier.fillMaxWidth().width(10.dp))
         Logo()
         BottomButtonsSection(ctx)
     }
@@ -82,6 +80,11 @@ fun BottomButtonsSection(ctx: Context) {
     ) {
         ButtonItem(text = stringResource(R.string.play), {
             Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
+            ContextCompat.startActivity(
+                ctx,
+                Intent(ctx, UnityPlayerActivity::class.java),
+                null
+            )
         }, buttonModifier)
         ButtonItem(text = stringResource(R.string.select_level), {
             ContextCompat.startActivity(ctx, Intent(ctx, LevelSelector::class.java), null)

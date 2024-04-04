@@ -33,6 +33,7 @@ import es.finders.scapetheadds.menu.home.Home
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BackButton
 import es.finders.scapetheadds.ui.utils.BasicBackground
+import es.finders.scapetheadds.ui.utils.ButtonItem
 import es.finders.scapetheadds.ui.utils.Logo
 import es.finders.scapetheadds.ui.utils.OutlineTextSection
 
@@ -113,6 +114,22 @@ fun LabeledSetting(label: String) {
 
 @Composable
 fun LanguageSettings(ctx: Context) {
+    val buttonModifier = Modifier
+        .padding(vertical = 8.dp)
+        .fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(vertical = 8.dp),
+    ) {
+        ButtonItem("English", {
+            Toast.makeText(ctx, "Changed language to English", Toast.LENGTH_LONG).show()
+        }, buttonModifier)
+        ButtonItem("Spanish", {
+            Toast.makeText(ctx, "Changed language to Spanish", Toast.LENGTH_LONG).show()
+        }, buttonModifier)
+    }
 }
 
 /*
