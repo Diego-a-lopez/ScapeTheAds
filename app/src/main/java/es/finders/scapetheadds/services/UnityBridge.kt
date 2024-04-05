@@ -16,6 +16,19 @@ class UnityBridge : Service() {
     private val TAG = "UnityBridge"
     private val PORT = 8080
 
+    private var mode = JSONObject().apply {
+        put("gamemode", "infinite")
+    }
+
+    private fun getMode(): JSONObject {
+        return mode
+    }
+
+    private fun setMode(newMode: JSONObject) {
+        this.mode = newMode
+    }
+
+
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Service onCreate")
@@ -44,10 +57,7 @@ class UnityBridge : Service() {
                 Log.d(TAG, "Client connected: ${clientSocket.inetAddress}")
 
                 // Send data to the client
-                val dataToSend = JSONObject().apply {
-                    put("gamemode", "infinite")
-                }
-                sendData(clientSocket, dataToSend.toString())
+                sendData(clientSocket, mode.toString())
 
                 // Receive data from the client
                 val receivedData = receiveData(clientSocket)

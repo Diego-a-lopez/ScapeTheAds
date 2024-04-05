@@ -3,7 +3,6 @@ package es.finders.scapetheadds.menu.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -21,9 +20,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.unity3d.player.UnityPlayerActivity
 import es.finders.scapetheadds.R
 import es.finders.scapetheadds.menu.leaderboard.Leaderboard
+import es.finders.scapetheadds.menu.level.Level
 import es.finders.scapetheadds.menu.levelselector.LevelSelector
 import es.finders.scapetheadds.menu.settings.SettingsActivity
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
@@ -62,7 +61,10 @@ fun HomeLayout(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Title(Modifier.fillMaxWidth().width(10.dp))
+        Title(
+            Modifier
+                .fillMaxWidth()
+                .width(100.dp))
         Logo()
         BottomButtonsSection(ctx)
     }
@@ -79,10 +81,9 @@ fun BottomButtonsSection(ctx: Context) {
             .padding(horizontal = 16.dp)
     ) {
         ButtonItem(text = stringResource(R.string.play), {
-            Toast.makeText(ctx, "Playing game", Toast.LENGTH_LONG).show()
             ContextCompat.startActivity(
                 ctx,
-                Intent(ctx, UnityPlayerActivity::class.java),
+                Intent(ctx, Level::class.java),
                 null
             )
         }, buttonModifier)
