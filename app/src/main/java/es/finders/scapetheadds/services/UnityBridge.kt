@@ -2,6 +2,7 @@ package es.finders.scapetheadds.services
 
 import android.app.Service
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import org.json.JSONObject
@@ -24,7 +25,7 @@ class UnityBridge : Service() {
         return mode
     }
 
-    private fun setMode(newMode: JSONObject) {
+    fun setMode(newMode: JSONObject) {
         this.mode = newMode
     }
 
@@ -42,10 +43,19 @@ class UnityBridge : Service() {
 
         return START_STICKY
     }
+    // Binder para comunicarse con la actividad
+    inner class LocalBinder : Binder() {
+        fun getService(): UnityBridge {
+            return this@UnityBridge
+        }
+    }
+
+    private val binder = LocalBinder()
 
     override fun onBind(intent: Intent): IBinder {
-        TODO("Return the communication channel to the service.")
+        return binder
     }
+
 
     private fun startServer() {
         try {
