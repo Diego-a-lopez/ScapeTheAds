@@ -96,34 +96,56 @@ fun LeaderboardLayout(ctx: Context, scoresType: String, modifier: Modifier = Mod
 @Composable
 fun LocalScoresContainer(containerColor: Color, containerOutlineColor: Color) {
     // Implement logic to load local scores
-    UserInfoContainer(containerColor, containerOutlineColor)
+    UserInfoContainer(containerColor, containerOutlineColor, false)
 }
 
 @Composable
 fun GlobalScoresContainer(containerColor: Color, containerOutlineColor: Color) {
     // Implement logic to load global scores
-    UserInfoContainer(containerColor, containerOutlineColor)
+    UserInfoContainer(containerColor, containerOutlineColor, true)
 }
 
 @Composable
-fun UserInfoContainer(containerColor: Color, containerOutlineColor: Color) {
+fun UserInfoContainer(containerColor: Color, containerOutlineColor: Color, isGlobalScore: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        // Each row wrapped in a Surface container
-        UserInfoRow("User Name", "Score", containerOutlineColor)
-        Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
-        UserInfoRow("John Doe", "100", containerOutlineColor)
-        Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
-        // Add more users as needed
+
+        if (isGlobalScore) {
+            // Each row wrapped in a Surface container
+            UserInfoRow(
+                stringResource(R.string.user_name),
+                stringResource(R.string.score),
+                stringResource(R.string.time),
+                containerOutlineColor
+            )
+            Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
+            UserInfoRow("Global John Doe", "100", "100", containerOutlineColor)
+            Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
+            // Add more users as needed
+        } else {
+            // Each row wrapped in a Surface container
+            UserInfoRow(
+                stringResource(R.string.score_date),
+                stringResource(R.string.score),
+                stringResource(R.string.time),
+                containerOutlineColor
+            )
+            Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
+            UserInfoRow("22-02-22", "100", "100", containerOutlineColor)
+            Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
+            // Add more users as needed
+        }
+
     }
 }
 
 @Composable
 fun UserInfoRow(
-    userName: String,
+    user: String,
     score: String,
+    time: String,
     textColor: Color
 ) {
     // Variables for styling
@@ -139,11 +161,16 @@ fun UserInfoRow(
             modifier = Modifier.padding(paddingValue),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = userName, color = textColor)
+            Text(text = user, color = textColor)
             Spacer(modifier = Modifier.weight(1f))
             Text(text = score, color = textColor)
             Spacer(modifier = Modifier.width(scorePaddingValue))
-            Text(text = "pto", color = textColor)
+            Text(text = stringResource(R.string.points), color = textColor)
+            Spacer(modifier = Modifier.width(scorePaddingValue))
+            Text(text = time, color = textColor)
+            Spacer(modifier = Modifier.width(scorePaddingValue))
+            Text(text = stringResource(R.string.seconds), color = textColor)
+
         }
     }
 }
