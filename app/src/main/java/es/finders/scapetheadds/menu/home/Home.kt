@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,14 +59,17 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 fun HomeLayout(modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Title(
             Modifier
                 .fillMaxWidth()
-                .width(100.dp))
+                .width(100.dp)
+        )
         Logo()
         BottomButtonsSection(ctx)
     }
