@@ -1,8 +1,11 @@
 package es.finders.scapetheadds.menu.home
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -27,11 +30,13 @@ import es.finders.scapetheadds.menu.leaderboard.Leaderboard
 import es.finders.scapetheadds.menu.level.Level
 import es.finders.scapetheadds.menu.levelselector.LevelSelector
 import es.finders.scapetheadds.menu.settings.SettingsActivity
+import es.finders.scapetheadds.services.UnityBridge
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.ButtonItem
 import es.finders.scapetheadds.ui.utils.Logo
 import es.finders.scapetheadds.ui.utils.Title
+import org.json.JSONObject
 
 class Home : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +46,39 @@ class Home : ComponentActivity() {
                 HomeScreen()
             }
         }
+    }
+
+    private lateinit var mService: UnityBridge
+    private var mBound: Boolean = false
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as UnityBridge.LocalBinder
+            mService = binder.getService()
+            mBound = true
+            mService.setMode(JSONObject().apply {
+                put("gamemode", "infinite")
+            })
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            mBound = false
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Bind to LocalService.
+        Intent(this, UnityBridge::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        mBound = false
     }
 }
 

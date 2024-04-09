@@ -1,8 +1,11 @@
 package es.finders.scapetheadds.menu.levelselector
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,10 +30,12 @@ import androidx.core.content.ContextCompat
 import es.finders.scapetheadds.R
 import es.finders.scapetheadds.menu.Defeat.Defeat
 import es.finders.scapetheadds.menu.Victory.Victory
+import es.finders.scapetheadds.services.UnityBridge
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.ButtonItem
 import es.finders.scapetheadds.ui.utils.OutlineTextSection
+import org.json.JSONObject
 import kotlin.random.Random
 
 class LevelSelector : ComponentActivity() {
@@ -41,6 +46,39 @@ class LevelSelector : ComponentActivity() {
                 LevelSelectorScreen()
             }
         }
+    }
+
+    private lateinit var mService: UnityBridge
+    private var mBound: Boolean = false
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as UnityBridge.LocalBinder
+            mService = binder.getService()
+            mBound = true
+            mService.setMode(JSONObject().apply {
+                put("gamemode", "level")
+            })
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            mBound = false
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Bind to LocalService.
+        Intent(this, UnityBridge::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        mBound = false
     }
 }
 
@@ -82,163 +120,211 @@ fun LevelSelectorLayout(modifier: Modifier = Modifier) {
     ) {
         OutlineTextSection(stringResource(R.string.level_selection))
         Row {
-            ButtonItem("1",
+            ButtonItem(
+                "1",
                 {
                     Toast.makeText(ctx, "Level 1 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("2",
+                buttonModifier
+            )
+            ButtonItem(
+                "2",
                 {
                     Toast.makeText(ctx, "Level 2 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("3",
+                buttonModifier
+            )
+            ButtonItem(
+                "3",
                 {
                     Toast.makeText(ctx, "Level 3 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("4",
+                buttonModifier
+            )
+            ButtonItem(
+                "4",
                 {
                     Toast.makeText(ctx, "Level 4 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
+                buttonModifier
+            )
         }
         Row {
-            ButtonItem("5",
+            ButtonItem(
+                "5",
                 {
                     Toast.makeText(ctx, "Level 5 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("6",
+                buttonModifier
+            )
+            ButtonItem(
+                "6",
                 {
                     Toast.makeText(ctx, "Level 6 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("7",
+                buttonModifier
+            )
+            ButtonItem(
+                "7",
                 {
                     Toast.makeText(ctx, "Level 7 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("8",
+                buttonModifier
+            )
+            ButtonItem(
+                "8",
                 {
                     Toast.makeText(ctx, "Level 8 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
+                buttonModifier
+            )
         }
         Row {
-            ButtonItem("9",
+            ButtonItem(
+                "9",
                 {
                     Toast.makeText(ctx, "Level 9 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("10",
+                buttonModifier
+            )
+            ButtonItem(
+                "10",
                 {
                     Toast.makeText(ctx, "Level 10 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("11",
+                buttonModifier
+            )
+            ButtonItem(
+                "11",
                 {
                     Toast.makeText(ctx, "Level 11 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("12",
+                buttonModifier
+            )
+            ButtonItem(
+                "12",
                 {
                     Toast.makeText(ctx, "Level 12 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
+                buttonModifier
+            )
         }
 
         Row {
-            ButtonItem("13",
+            ButtonItem(
+                "13",
                 {
                     Toast.makeText(ctx, "Level 13 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("14",
+                buttonModifier
+            )
+            ButtonItem(
+                "14",
                 {
                     Toast.makeText(ctx, "Level 14 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("15",
+                buttonModifier
+            )
+            ButtonItem(
+                "15",
                 {
                     Toast.makeText(ctx, "Level 15 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("16",
+                buttonModifier
+            )
+            ButtonItem(
+                "16",
                 {
                     Toast.makeText(ctx, "Level 16 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
+                buttonModifier
+            )
         }
 
         Row {
-            ButtonItem("17",
+            ButtonItem(
+                "17",
                 {
                     Toast.makeText(ctx, "Level 17 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("18",
+                buttonModifier
+            )
+            ButtonItem(
+                "18",
                 {
                     Toast.makeText(ctx, "Level 18 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("19",
+                buttonModifier
+            )
+            ButtonItem(
+                "19",
                 {
                     Toast.makeText(ctx, "Level 19 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("20",
+                buttonModifier
+            )
+            ButtonItem(
+                "20",
                 {
                     Toast.makeText(ctx, "Level 20 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
+                buttonModifier
+            )
         }
 
         Row {
-            ButtonItem("21",
+            ButtonItem(
+                "21",
                 {
                     Toast.makeText(ctx, "Level 21 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("22",
+                buttonModifier
+            )
+            ButtonItem(
+                "22",
                 {
                     Toast.makeText(ctx, "Level 22 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("23",
+                buttonModifier
+            )
+            ButtonItem(
+                "23",
                 {
                     Toast.makeText(ctx, "Level 23 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
-            ButtonItem("24",
+                buttonModifier
+            )
+            ButtonItem(
+                "24",
                 {
                     Toast.makeText(ctx, "Level 24 selected", Toast.LENGTH_LONG).show()
                     goRandomlyToVictoryOrDefeat(ctx)
                 },
-                buttonModifier)
+                buttonModifier
+            )
         }
     }
 }
