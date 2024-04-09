@@ -22,6 +22,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,11 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import es.finders.scapetheadds.R
 import es.finders.scapetheadds.menu.home.Home
+import es.finders.scapetheadds.menu.leaderborad.HighScore
+import es.finders.scapetheadds.menu.leaderborad.HighScoreViewModel
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BackButton
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.OutlineTextSection
 
+// Layout + App functionality
 class Leaderboard : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,17 +59,29 @@ class Leaderboard : ComponentActivity() {
 @Composable
 fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
+    val viewModel = remember { HighScoreViewModel() }
+
+    // Fetch high scores when the screen is created
+    LaunchedEffect(Unit) {
+        viewModel.getHighScores()
+    }
+
     Box(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
         BasicBackground(modifier.fillMaxSize())
-        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize())
+        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), viewModel.highScores)
     }
 }
 
 @Composable
-fun LeaderboardLayout(ctx: Context, scoresType: String, modifier: Modifier = Modifier) {
+fun LeaderboardLayout(
+    ctx: Context,
+    scoresType: String,
+    modifier: Modifier = Modifier,
+    highScores: List<HighScore>
+) {
     // Variables for styling
     val containerColor = MaterialTheme.colorScheme.surface
     val containerOutlineColor = MaterialTheme.colorScheme.onSurface
@@ -89,7 +106,7 @@ fun LeaderboardLayout(ctx: Context, scoresType: String, modifier: Modifier = Mod
         } else if (scoresType == stringResource(R.string.global_scores)) {
             OutlineTextSection(stringResource(R.string.global_scores))
             // Load global scores
-            GlobalScoresContainer(containerColor, containerOutlineColor)
+            GlobalScoresContainer(containerColor, containerOutlineColor, highScores)
         }
 
     }
@@ -97,65 +114,68 @@ fun LeaderboardLayout(ctx: Context, scoresType: String, modifier: Modifier = Mod
 
 @Composable
 fun LocalScoresContainer(containerColor: Color, containerOutlineColor: Color) {
-    // Implement logic to load local scores
-    UserInfoContainer(containerColor, containerOutlineColor, false)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        // Each row wrapped in a Surface container
+        UserInfoRow(
+            stringResource(R.string.score_date),
+            stringResource(R.string.score),
+            stringResource(R.string.time),
+            containerOutlineColor
+        )
+        Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            repeat(10) {
+                UserInfoRow("22-02-22", "100", "100", containerOutlineColor)
+                Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
+                // Add more users as needed
+            }
+        }
+    }
+
 }
 
-@Composable
-fun GlobalScoresContainer(containerColor: Color, containerOutlineColor: Color) {
-    // Implement logic to load global scores
-    UserInfoContainer(containerColor, containerOutlineColor, true)
-}
 
 @Composable
-fun UserInfoContainer(containerColor: Color, containerOutlineColor: Color, isGlobalScore: Boolean) {
+fun GlobalScoresContainer(
+    containerColor: Color,
+    containerOutlineColor: Color,
+    highScores: List<HighScore>
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
 
-        if (isGlobalScore) {
-            // Each row wrapped in a Surface container
-            UserInfoRow(
-                stringResource(R.string.user_name),
-                stringResource(R.string.score),
-                stringResource(R.string.time),
-                containerOutlineColor
-            )
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-            ) {
-                repeat(10) {
-                    Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
-                    UserInfoRow("Global John Doe", "100", "100", containerOutlineColor)
-                    Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
-                }
-            }
-            // Add more users as needed
-        } else {
-            // Each row wrapped in a Surface container
-            UserInfoRow(
-                stringResource(R.string.score_date),
-                stringResource(R.string.score),
-                stringResource(R.string.time),
-                containerOutlineColor
-            )
-            Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-            ) {
 
-                repeat(10) {
-                    UserInfoRow("22-02-22", "100", "100", containerOutlineColor)
-                    Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
-                    // Add more users as needed
-                }
+        // Each row wrapped in a Surface container
+        UserInfoRow(
+            stringResource(R.string.user_name),
+            stringResource(R.string.score),
+            stringResource(R.string.time),
+            containerOutlineColor
+        )
+        Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            highScores.forEach { score ->
+                //UserInfoRow("Global John Doe", "100", "100", containerOutlineColor)
+                UserInfoRow(score.user, score.score, score.time, containerOutlineColor)
+                Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
             }
         }
-
+        // Add more users as needed
     }
+
 }
 
 @Composable
