@@ -23,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,9 +33,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import es.finders.scapetheadds.AndroidRoom.HighScore
+import es.finders.scapetheadds.AndroidRoom.retrieveHighScores
 import es.finders.scapetheadds.R
 import es.finders.scapetheadds.menu.home.Home
-import es.finders.scapetheadds.menu.leaderborad.HighScore
 import es.finders.scapetheadds.menu.leaderborad.HighScoreViewModel
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BackButton
@@ -60,10 +62,14 @@ class Leaderboard : ComponentActivity() {
 fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     val viewModel = remember { HighScoreViewModel() }
+    val highScores = remember { mutableStateListOf<HighScore>() }
+
 
     // Fetch high scores when the screen is created
     LaunchedEffect(Unit) {
         viewModel.getHighScores()
+        highScores.clear()
+        highScores.addAll(retrieveHighScores(ctx))
     }
 
     Box(
@@ -71,7 +77,7 @@ fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         BasicBackground(modifier.fillMaxSize())
-        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), viewModel.highScores)
+        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), viewModel.highScores, highScores)
     }
 }
 
@@ -80,7 +86,8 @@ fun LeaderboardLayout(
     ctx: Context,
     scoresType: String,
     modifier: Modifier = Modifier,
-    highScores: List<HighScore>
+    highScores: List<HighScore>,
+    localHighScores: List<HighScore>
 ) {
     // Variables for styling
     val containerColor = MaterialTheme.colorScheme.surface
@@ -102,7 +109,7 @@ fun LeaderboardLayout(
         if (scoresType == stringResource(R.string.local_scores)) {
             OutlineTextSection(stringResource(R.string.local_scores))
             // Load local scores
-            LocalScoresContainer(containerColor, containerOutlineColor)
+            LocalScoresContainer(containerColor, containerOutlineColor, localHighScores)
         } else if (scoresType == stringResource(R.string.global_scores)) {
             OutlineTextSection(stringResource(R.string.global_scores))
             // Load global scores
@@ -113,14 +120,18 @@ fun LeaderboardLayout(
 }
 
 @Composable
-fun LocalScoresContainer(containerColor: Color, containerOutlineColor: Color) {
+fun LocalScoresContainer(
+    containerColor: Color,
+    containerOutlineColor: Color,
+    localScores: List<HighScore>
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
         // Each row wrapped in a Surface container
         UserInfoRow(
-            stringResource(R.string.score_date),
+            stringResource(R.string.user_name),
             stringResource(R.string.score),
             stringResource(R.string.time),
             containerOutlineColor
@@ -130,15 +141,12 @@ fun LocalScoresContainer(containerColor: Color, containerOutlineColor: Color) {
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
-
-            repeat(10) {
-                UserInfoRow("22-02-22", "100", "100", containerOutlineColor)
+            localScores.forEach { score ->
+                UserInfoRow(score.user, score.score, score.time, containerOutlineColor)
                 Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
-                // Add more users as needed
             }
         }
     }
-
 }
 
 

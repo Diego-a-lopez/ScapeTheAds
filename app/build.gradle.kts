@@ -51,6 +51,31 @@ android {
 
 dependencies {
 
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-common:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+
+    // To use Kotlin annotation processing tool (kapt)
+    //kapt("androidx.room:room-compiler:2.6.1")
+    // To use Kotlin Symbol Processing (KSP)
+    //ksp("androidx.room:room-compiler:2.6.1")
+
+    // optional - RxJava2 support for Room
+    implementation("androidx.room:room-rxjava2:2.6.1")
+
+    // optional - RxJava3 support for Room
+    implementation("androidx.room:room-rxjava3:2.6.1")
+
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    implementation("androidx.room:room-guava:2.6.1")
+
+    // optional - Test helpers
+    testImplementation("androidx.room:room-testing:2.6.1")
+
+    // optional - Paging 3 Integration
+    implementation("androidx.room:room-paging:2.6.1")
+
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")

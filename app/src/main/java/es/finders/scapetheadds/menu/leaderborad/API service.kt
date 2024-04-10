@@ -6,13 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import es.finders.scapetheadds.AndroidRoom.HighScore
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-
-data class HighScore(val user: String, val score: String, val time: String)
 
 const val BASE_URL = "http://0.0.0.0:8000"
 
