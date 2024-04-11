@@ -1,4 +1,4 @@
-package es.finders.scapetheadds.menu.Defeat
+package es.finders.scapetheadds.menu.defeat
 
 import android.content.Intent
 import android.os.Bundle
