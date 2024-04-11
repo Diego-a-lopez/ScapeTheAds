@@ -1,4 +1,4 @@
-package es.finders.scapetheadds.menu.victory
+package es.finders.scapetheadds.menu.Victory
 
 import android.content.Intent
 import android.os.Bundle
