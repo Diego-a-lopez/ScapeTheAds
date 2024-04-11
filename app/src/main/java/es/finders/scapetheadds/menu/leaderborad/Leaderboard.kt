@@ -3,6 +3,7 @@ package es.finders.scapetheadds.menu.leaderboard
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -42,6 +43,8 @@ import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheadds.ui.utils.BackButton
 import es.finders.scapetheadds.ui.utils.BasicBackground
 import es.finders.scapetheadds.ui.utils.OutlineTextSection
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 // Layout + App functionality
 class Leaderboard : ComponentActivity() {
@@ -64,12 +67,26 @@ fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
     val viewModel = remember { HighScoreViewModel() }
     val highScores = remember { mutableStateListOf<HighScore>() }
 
-
     // Fetch high scores when the screen is created
+
+
     LaunchedEffect(Unit) {
-        viewModel.getHighScores()
-        highScores.clear()
-        highScores.addAll(retrieveHighScores(ctx))
+        try {
+            viewModel.getHighScores()
+            highScores.clear()
+            highScores.addAll(retrieveHighScores(ctx))
+        } catch (e: Exception) {
+            // If there's an exception, add a single high score indicating failure
+            highScores.clear()
+            highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    ctx,
+                    "Failed to retrieve scores: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     Box(
