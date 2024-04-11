@@ -68,25 +68,51 @@ fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
     val highScores = remember { mutableStateListOf<HighScore>() }
 
     // Fetch high scores when the screen is created
-
-
-    LaunchedEffect(Unit) {
-        try {
-            viewModel.getHighScores()
-            highScores.clear()
-            highScores.addAll(retrieveHighScores(ctx))
-        } catch (e: Exception) {
-            // If there's an exception, add a single high score indicating failure
-            highScores.clear()
-            highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    ctx,
-                    "Failed to retrieve scores: ${e.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+    if (scoresType == stringResource(R.string.local_scores)) {
+        LaunchedEffect(Unit) {
+            try {
+                highScores.clear()
+                highScores.addAll(retrieveHighScores(ctx))
+            } catch (e: Exception) {
+                // If there's an exception, add a single high score indicating failure
+                highScores.clear()
+                highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        ctx,
+                        "Failed to retrieve scores: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
+    } else if (scoresType == stringResource(R.string.global_scores)) {
+        LaunchedEffect(Unit) {
+            try {
+                viewModel.getHighScores()
+                highScores.clear()
+                highScores.addAll(viewModel.highScores)
+            } catch (e: Exception) {
+                // If there's an exception, add a single high score indicating failure
+                highScores.clear()
+                highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        ctx,
+                        "Failed to retrieve scores: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    } else {
+        highScores.clear()
+        highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+        Toast.makeText(
+            ctx,
+            "Failed to retrieve scores: Score type undefined",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     Box(
@@ -94,7 +120,7 @@ fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         BasicBackground(modifier.fillMaxSize())
-        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), viewModel.highScores, highScores)
+        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), highScores)
     }
 }
 
@@ -104,7 +130,6 @@ fun LeaderboardLayout(
     scoresType: String,
     modifier: Modifier = Modifier,
     highScores: List<HighScore>,
-    localHighScores: List<HighScore>
 ) {
     // Variables for styling
     val containerColor = MaterialTheme.colorScheme.surface
@@ -126,7 +151,7 @@ fun LeaderboardLayout(
         if (scoresType == stringResource(R.string.local_scores)) {
             OutlineTextSection(stringResource(R.string.local_scores))
             // Load local scores
-            LocalScoresContainer(containerColor, containerOutlineColor, localHighScores)
+            LocalScoresContainer(containerColor, containerOutlineColor, highScores)
         } else if (scoresType == stringResource(R.string.global_scores)) {
             OutlineTextSection(stringResource(R.string.global_scores))
             // Load global scores
