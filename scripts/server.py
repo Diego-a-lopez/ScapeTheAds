@@ -63,8 +63,8 @@ class UserResponse(BaseModel):
 # Create a new user
 @app.post("/users/", response_model=UserResponse)
 def create_user(user: CreateUserRequest):
-    db_user = User(name=user.name)
-    db_highscore = Highscore(score=user.highscore.score, clear_time=user.highscore.clear_time, date=user.highscore.date)
+    db_highscore = Highscore(id=uuid4(),score=user.highscore.score, clear_time=user.highscore.clear_time, date=user.highscore.date)
+    db_user = User(id=uuid4(), name=user.name, Highscore=db_highscore)
     db_user.highscore = db_highscore
 
     db = SessionLocal()
