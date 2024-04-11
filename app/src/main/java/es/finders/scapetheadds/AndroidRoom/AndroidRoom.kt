@@ -1,5 +1,5 @@
 package es.finders.scapetheadds.AndroidRoom
-
+/*
 import android.content.Context
 import androidx.room.ColumnInfo
 import androidx.room.Dao
@@ -69,6 +69,6 @@ fun retrieveHighScores(context: Context): List<HighScore> {
     val highScoreEntities = highScoreDao.getAll()
     return highScoreEntities.map { HighScore(it.user, it.score, it.time) }
 }
-
+*/
 
 

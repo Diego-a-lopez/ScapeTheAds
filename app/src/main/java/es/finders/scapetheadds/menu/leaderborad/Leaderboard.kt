@@ -35,8 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import es.finders.scapetheadds.AndroidRoom.HighScore
-import es.finders.scapetheadds.AndroidRoom.retrieveHighScores
 import es.finders.scapetheadds.R
+import es.finders.scapetheadds.localScores.LocalScoreManager
 import es.finders.scapetheadds.menu.home.Home
 import es.finders.scapetheadds.menu.leaderborad.HighScoreViewModel
 import es.finders.scapetheadds.ui.theme.ScapeTheAddsTheme
@@ -65,6 +65,7 @@ class Leaderboard : ComponentActivity() {
 fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     val viewModel = remember { HighScoreViewModel() }
+    val localScoreManager = remember { LocalScoreManager(ctx) }
     val highScores = remember { mutableStateListOf<HighScore>() }
 
     // Fetch high scores when the screen is created
@@ -72,7 +73,7 @@ fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
         LaunchedEffect(Unit) {
             try {
                 highScores.clear()
-                highScores.addAll(retrieveHighScores(ctx))
+                highScores.addAll(localScoreManager.retrieveScores())
             } catch (e: Exception) {
                 // If there's an exception, add a single high score indicating failure
                 highScores.clear()
