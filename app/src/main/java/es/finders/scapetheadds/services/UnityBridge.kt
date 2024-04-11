@@ -2,8 +2,12 @@ package es.finders.scapetheadds.services
 
 import android.app.Service
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
 import java.io.InputStream
@@ -15,6 +19,21 @@ class UnityBridge : Service() {
 
     private val TAG = "UnityBridge"
     private val PORT = 8080
+
+    private var mode = JSONObject().apply {
+        put("gamemode", "infinite")
+    }
+
+    fun getMode(): JSONObject {
+        Log.d(TAG, "Retrieved mode")
+        return mode
+    }
+
+    fun setMode(newMode: JSONObject) {
+        Log.d(TAG, "Set mode")
+        this.mode = newMode
+    }
+
 
     override fun onCreate() {
         super.onCreate()
@@ -30,8 +49,14 @@ class UnityBridge : Service() {
         return START_STICKY
     }
 
+    private val binder = LocalBinder()
+
+    inner class LocalBinder : Binder() {
+        fun getService(): UnityBridge = this@UnityBridge
+    }
+
     override fun onBind(intent: Intent): IBinder {
-        TODO("Return the communication channel to the service.")
+        return binder
     }
 
     private fun startServer() {
@@ -44,14 +69,13 @@ class UnityBridge : Service() {
                 Log.d(TAG, "Client connected: ${clientSocket.inetAddress}")
 
                 // Send data to the client
-                val dataToSend = JSONObject().apply {
-                    put("gamemode", "infinite")
-                }
-                sendData(clientSocket, dataToSend.toString())
+                sendData(clientSocket, mode.toString())
 
                 // Receive data from the client
                 val receivedData = receiveData(clientSocket)
                 Log.d(TAG, "Received data: $receivedData")
+
+                handleData(receivedData)
 
                 clientSocket.close()
             }
@@ -71,6 +95,18 @@ class UnityBridge : Service() {
         val buffer = ByteArray(1024)
         val bytesRead = inputStream.read(buffer)
         return String(buffer, 0, bytesRead)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun handleData(data: String) {
+        GlobalScope.launch {
+            println(data) // TODO: Remove
+            // If infinite mode score
+            // TODO: Store in local room score
+            // TODO: Send to server data if highscore > current user highscore
+            // If level
+            // TODO: Update in room level completion
+        }
     }
 
     override fun onDestroy() {

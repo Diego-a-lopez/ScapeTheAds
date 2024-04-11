@@ -16,4 +16,10 @@
     <string name="language">Language</string>
     <string name="volume">Volume</string>
     <string name="theme">Theme</string>
+    <string name="points">Pts.</string>
+    <string name="seconds">Sec.</string>
+    <string name="user_name">User Name</string>
+    <string name="score">Score</string>
+    <string name="time">Time</string>
+    <string name="score_date">Score Date</string>
 </resources>
