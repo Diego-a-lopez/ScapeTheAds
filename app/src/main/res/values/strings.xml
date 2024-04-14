@@ -22,4 +22,8 @@
     <string name="score">Score</string>
     <string name="time">Time</string>
     <string name="score_date">Score Date</string>
+    <string name="default_web_client_id">239107092707-aueokqg6udj8l98bto586f496j8t0558.apps.googleusercontent.com</string>
+    <string name="sign_in_with_google">Inciar sesión con Google</string>
+    <string name="signed_out">Signed out</string>
+    <string name="exit">Exit</string>
 </resources>

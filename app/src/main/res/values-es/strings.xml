@@ -22,4 +22,7 @@
     <string name="score">Puntuación</string>
     <string name="time">Tiempo</string>
     <string name="score_date">Fecha</string>
+    <string name="sign_in_with_google">Iniciar sesión con Google</string>
+    <string name="signed_out">Sesión cerrada</string>
+    <string name="exit">Salir</string>
 </resources>

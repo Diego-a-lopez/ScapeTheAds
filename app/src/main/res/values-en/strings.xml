@@ -22,4 +22,7 @@
     <string name="score">Score</string>
     <string name="time">Time</string>
     <string name="score_date">Score Date</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="signed_out">Signed out</string>
+    <string name="exit">Exit</string>
 </resources>

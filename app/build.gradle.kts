@@ -1,14 +1,15 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "es.finders.scapetheadds"
+    namespace = "es.finders.scapetheads"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "es.finders.scapetheadds"
+        applicationId = "es.finders.scapetheads"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -54,6 +55,7 @@ dependencies {
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
 
     // To use Kotlin annotation processing tool (kapt)
@@ -96,5 +98,13 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+
 }
