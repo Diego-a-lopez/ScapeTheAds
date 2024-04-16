@@ -23,6 +23,7 @@ import com.google.android.gms.auth.api.identity.Identity
 import es.finders.scapetheads.R
 import es.finders.scapetheads.auth.GoogleAuthClient
 import es.finders.scapetheads.auth.SignInViewModel
+import es.finders.scapetheads.firestore.FirestoreClient
 import es.finders.scapetheads.menu.nickname.NicknameScreen
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
@@ -36,6 +37,11 @@ class Login : ComponentActivity() {
             oneTapClient = Identity.getSignInClient(applicationContext)
         )
     }
+
+    private val firestoreClient by lazy {
+        FirestoreClient()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +114,7 @@ class Login : ComponentActivity() {
 
                         composable("nickname") {
                             Log.d("LoginScreen", googleAuthUiClient.getSignedInUser().toString())
+                            firestoreClient.testUpload()
                             NicknameScreen(
                                 onSignOut = {
                                     lifecycleScope.launch {
