@@ -31,6 +31,15 @@ fun AddScoreDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 TextField(
+                    value = state.nickname,
+                    onValueChange = {
+                        onEvent(LocalScoreEvent.SetNickname(it))
+                    },
+                    placeholder = {
+                        Text(text = "NickName")
+                    }
+                )
+                TextField(
                     value = state.date,
                     onValueChange = {
                         onEvent(LocalScoreEvent.SetDate(it))

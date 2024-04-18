@@ -15,7 +15,10 @@ interface LocalScoreDao {
     suspend fun delete(localScore: LocalScore)
 
     @Query("SELECT * FROM localScore")
-    fun getAll(): List<LocalScore>
+    fun getAll(): Flow<List<LocalScore>>
+
+    @Query("SELECT * FROM localScore ORDER BY nickname ASC")
+    fun getLocalScoresOrderedByNickname(): Flow<List<LocalScore>>
 
     @Query("SELECT * FROM localScore ORDER BY date ASC")
     fun getLocalScoresOrderedByDate(): Flow<List<LocalScore>>

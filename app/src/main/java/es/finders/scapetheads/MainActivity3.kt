@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import com.plcoding.roomguideandroid.ScoreScreen
+import es.finders.scapetheads.menu.ScoresTest.ScoreScreen
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
@@ -20,7 +20,7 @@ class MainActivity3 : ComponentActivity() {
         Room.databaseBuilder(
             applicationContext,
             LocalScoreDatabase::class.java,
-            "scores.db"
+            "localscores.db"
         ).build()
     }
     private val viewModel by viewModels<LocalScoreViewModel>(

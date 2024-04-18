@@ -16,13 +16,14 @@
     <string name="language">Idioma</string>
     <string name="volume">Volumen</string>
     <string name="theme">Tema</string>
-    <string name="points">Ptos.</string>
-    <string name="seconds">Seg.</string>
-    <string name="user_name">Nombre del Usuario</string>
+    <string name="points">Pt</string>
+    <string name="seconds">s</string>
+    <string name="user_name">Usuario</string>
     <string name="score">Puntuación</string>
     <string name="time">Tiempo</string>
     <string name="score_date">Fecha</string>
     <string name="sign_in_with_google">Iniciar sesión con Google</string>
     <string name="signed_out">Sesión cerrada</string>
     <string name="exit">Salir</string>
+    <string name="date">Date</string>
 </resources>

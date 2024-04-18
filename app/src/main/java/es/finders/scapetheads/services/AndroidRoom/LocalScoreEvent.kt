@@ -2,6 +2,7 @@ package es.finders.scapetheads.services.AndroidRoom
 
 sealed interface LocalScoreEvent {
     object SaveScore : LocalScoreEvent
+    data class SetNickname(val nickname: String) : LocalScoreEvent
     data class SetDate(val date: String) : LocalScoreEvent
     data class SetScoreVal(val scoreVal: String) : LocalScoreEvent
     data class SetTime(val time: String) : LocalScoreEvent

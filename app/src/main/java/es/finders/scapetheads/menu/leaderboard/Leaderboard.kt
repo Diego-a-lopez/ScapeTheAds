@@ -41,6 +41,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
+import es.finders.scapetheads.firestore.FirestoreClient
 import es.finders.scapetheads.menu.home.Home
 import es.finders.scapetheads.services.APIService.ApiClient
 import es.finders.scapetheads.services.APIService.HighScore
@@ -50,9 +51,6 @@ import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.OutlineTextSection
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 // Layout + App functionality
 class Leaderboard : ComponentActivity() {
@@ -61,7 +59,7 @@ class Leaderboard : ComponentActivity() {
         Room.databaseBuilder(
             applicationContext,
             LocalScoreDatabase::class.java,
-            "scores.db"
+            "localscores.db"
         ).build()
     }
 
@@ -75,6 +73,10 @@ class Leaderboard : ComponentActivity() {
         }
     )
 
+    private val firestoreClient by lazy {
+        FirestoreClient()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -83,7 +85,7 @@ class Leaderboard : ComponentActivity() {
                 intent.getStringExtra("scoresType") ?: stringResource(R.string.global_scores)
             //val scoresType = stringResource(R.string.global_scores)
             ScapeTheAddsTheme {
-                LeaderboardScreen(scoresType, state = state)
+                LeaderboardScreen(scoresType, state = state, firestoreClient = firestoreClient)
             }
         }
     }
@@ -91,7 +93,10 @@ class Leaderboard : ComponentActivity() {
 
 @Composable
 fun LeaderboardScreen(
-    scoresType: String, modifier: Modifier = Modifier, state: LocalScoreState
+    scoresType: String,
+    modifier: Modifier = Modifier,
+    state: LocalScoreState,
+    firestoreClient: FirestoreClient
 ) {
     val ctx = LocalContext.current
     //val call = ApiClient.apiService.getScoreByUserName("John")//ApiClient.apiService.getHighScores(10)
@@ -100,37 +105,21 @@ fun LeaderboardScreen(
 
 
     if (scoresType == stringResource(R.string.global_scores)) {
-        call.enqueue(object : Callback<List<HighScore>> {
-            override fun onResponse(
-                call: Call<List<HighScore>>,
-                response: Response<List<HighScore>>
-            ) {
-                if (response.isSuccessful) {
-                    val scores = response.body()
-                    // Handle the retrieved scores data
-                    scores?.let {
-                        // Clear existing scores and add all retrieved scores to the list
-                        highScores.clear()
-                        highScores.addAll(it)
-                    }
-                } else {
-                    // If request fails, clear the scores list and add a default score
-                    highScores.clear()
-                    highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
-                }
-            }
 
-            override fun onFailure(call: Call<List<HighScore>>, t: Throwable) {
-                // Handle failure here, e.g., log error, show error message, etc.
-            }
-        })
-        highScores.clear()
-        highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+        try {
+            firestoreClient.getTopHighscores(10)
+        } finally {
+            highScores.clear()
+            highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
+        }
+
     } else if (scoresType == stringResource(R.string.local_scores)) {
         highScores.clear()
         state.localScores.forEach { localScore ->
             val highScore = HighScore(
-                user = localScore.date, // Assuming user is a property of your local score
+
+                user = localScore.nickname, // Assuming user is a property of your local score
+                date = localScore.date,
                 score = localScore.score, // Assuming score is a property of your local score
                 time = localScore.time // Assuming time is a property of your local score
             )
@@ -139,7 +128,7 @@ fun LeaderboardScreen(
 
     } else {
         highScores.clear()
-        highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+        highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
         Toast.makeText(
             ctx,
             "Failed to retrieve scores: Score type undefined",
@@ -206,6 +195,7 @@ fun LocalScoresContainer(
         // Each row wrapped in a Surface container
         UserInfoRow(
             stringResource(R.string.user_name),
+            stringResource(R.string.date),
             stringResource(R.string.score),
             stringResource(R.string.time),
             containerOutlineColor
@@ -216,7 +206,7 @@ fun LocalScoresContainer(
                 .verticalScroll(rememberScrollState())
         ) {
             localScores.forEach { score ->
-                UserInfoRow(score.user, score.score, score.time, containerOutlineColor)
+                UserInfoRow(score.user, score.date, score.score, score.time, containerOutlineColor)
                 Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
             }
         }
@@ -239,6 +229,7 @@ fun GlobalScoresContainer(
         // Each row wrapped in a Surface container
         UserInfoRow(
             stringResource(R.string.user_name),
+            stringResource(R.string.date),
             stringResource(R.string.score),
             stringResource(R.string.time),
             containerOutlineColor
@@ -251,7 +242,7 @@ fun GlobalScoresContainer(
 
             highScores.forEach { score ->
                 //UserInfoRow("Global John Doe", "100", "100", containerOutlineColor)
-                UserInfoRow(score.user, score.score, score.time, containerOutlineColor)
+                UserInfoRow(score.user, score.date, score.score, score.time, containerOutlineColor)
                 Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
             }
         }
@@ -263,6 +254,7 @@ fun GlobalScoresContainer(
 @Composable
 fun UserInfoRow(
     user: String,
+    date: String,
     score: String,
     time: String,
     textColor: Color
@@ -281,6 +273,8 @@ fun UserInfoRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text = user, color = textColor)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(text = date, color = textColor)
             Spacer(modifier = Modifier.weight(1f))
             Text(text = score, color = textColor)
             Spacer(modifier = Modifier.width(scorePaddingValue))

@@ -1,4 +1,4 @@
-package com.plcoding.roomguideandroid
+package es.finders.scapetheads.menu.ScoresTest
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -112,10 +112,10 @@ fun ScoreScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "${contact.date} ${contact.score}",
+                            text = "${contact.nickname} ${contact.score} ${contact.time} ",
                             fontSize = 20.sp
                         )
-                        Text(text = contact.time, fontSize = 12.sp)
+                        Text(text = contact.date, fontSize = 12.sp)
                     }
                     IconButton(onClick = {
                         onEvent(LocalScoreEvent.DeleteScore(contact))

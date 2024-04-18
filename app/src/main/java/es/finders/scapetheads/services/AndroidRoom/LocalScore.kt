@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class LocalScore(
+    val nickname: String,
     val date: String,
     val score: String,
     val time: String,

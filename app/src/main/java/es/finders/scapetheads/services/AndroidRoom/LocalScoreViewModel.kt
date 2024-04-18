@@ -19,6 +19,7 @@ class LocalScoreViewModel(private val dao: LocalScoreDao) : ViewModel() {
     private val _localScores = _scoreSortType
         .flatMapLatest { scoreSortType ->
             when (scoreSortType) {
+                ScoreSortType.NICKNAME -> dao.getLocalScoresOrderedByNickname()
                 ScoreSortType.DATE -> dao.getLocalScoresOrderedByDate() //.getAll()
                 ScoreSortType.SCORE -> dao.getLocalScoresOrderedByScore() //.getAll()
                 ScoreSortType.TIME -> dao.getLocalScoresOrderedByTime() //.getAll()
@@ -52,15 +53,17 @@ class LocalScoreViewModel(private val dao: LocalScoreDao) : ViewModel() {
             }
 
             LocalScoreEvent.SaveScore -> {
+                val Nickname = state.value.nickname
                 val Date = state.value.date
                 val ScoreVal = state.value.scoreVal
                 val Time = state.value.time
 
-                if (Date.isBlank() || ScoreVal.isBlank() || Time.isBlank()) {
+                if (Nickname.isBlank() || Date.isBlank() || ScoreVal.isBlank() || Time.isBlank()) {
                     return
                 }
 
                 val LocalScore = LocalScore(
+                    nickname = Nickname,
                     date = Date,
                     score = ScoreVal,
                     time = Time
@@ -71,9 +74,18 @@ class LocalScoreViewModel(private val dao: LocalScoreDao) : ViewModel() {
                 _state.update {
                     it.copy(
                         isAddingScore = false,
+                        nickname = "",
                         date = "",
                         scoreVal = "",
                         time = ""
+                    )
+                }
+            }
+
+            is LocalScoreEvent.SetNickname -> {
+                _state.update {
+                    it.copy(
+                        nickname = event.nickname
                     )
                 }
             }
