@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,78 +36,107 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import es.finders.scapetheads.AndroidRoom.HighScore
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
-import es.finders.scapetheads.localScores.LocalScoreManager
 import es.finders.scapetheads.menu.home.Home
-import es.finders.scapetheads.menu.leaderborad.HighScoreViewModel
+import es.finders.scapetheads.services.APIService.ApiClient
+import es.finders.scapetheads.services.APIService.HighScore
+import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
+import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.OutlineTextSection
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 // Layout + App functionality
 class Leaderboard : ComponentActivity() {
+
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            LocalScoreDatabase::class.java,
+            "scores.db"
+        ).build()
+    }
+
+    private val viewModel by viewModels<LocalScoreViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return LocalScoreViewModel(db.dao) as T
+                }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val state by viewModel.state.collectAsState()
             val scoresType =
                 intent.getStringExtra("scoresType") ?: stringResource(R.string.global_scores)
             //val scoresType = stringResource(R.string.global_scores)
             ScapeTheAddsTheme {
-                LeaderboardScreen(scoresType)
+                LeaderboardScreen(scoresType, state = state)
             }
         }
     }
 }
 
 @Composable
-fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
+fun LeaderboardScreen(
+    scoresType: String, modifier: Modifier = Modifier, state: LocalScoreState
+) {
     val ctx = LocalContext.current
-    val viewModel = remember { HighScoreViewModel() }
-    val localScoreManager = remember { LocalScoreManager(ctx) }
+    //val call = ApiClient.apiService.getScoreByUserName("John")//ApiClient.apiService.getHighScores(10)
+    val call = ApiClient.apiService.getAllHighScores()
     val highScores = remember { mutableStateListOf<HighScore>() }
 
-    // Fetch high scores when the screen is created
-    if (scoresType == stringResource(R.string.local_scores)) {
-        LaunchedEffect(Unit) {
-            try {
-                highScores.clear()
-                highScores.addAll(localScoreManager.retrieveScores())
-            } catch (e: Exception) {
-                // If there's an exception, add a single high score indicating failure
-                highScores.clear()
-                highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        ctx,
-                        "Failed to retrieve scores: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+
+    if (scoresType == stringResource(R.string.global_scores)) {
+        call.enqueue(object : Callback<List<HighScore>> {
+            override fun onResponse(
+                call: Call<List<HighScore>>,
+                response: Response<List<HighScore>>
+            ) {
+                if (response.isSuccessful) {
+                    val scores = response.body()
+                    // Handle the retrieved scores data
+                    scores?.let {
+                        // Clear existing scores and add all retrieved scores to the list
+                        highScores.clear()
+                        highScores.addAll(it)
+                    }
+                } else {
+                    // If request fails, clear the scores list and add a default score
+                    highScores.clear()
+                    highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
                 }
             }
-        }
-    } else if (scoresType == stringResource(R.string.global_scores)) {
-        LaunchedEffect(Unit) {
-            try {
-                viewModel.getHighScores()
-                highScores.clear()
-                highScores.addAll(viewModel.highScores)
-            } catch (e: Exception) {
-                // If there's an exception, add a single high score indicating failure
-                highScores.clear()
-                highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        ctx,
-                        "Failed to retrieve scores: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+
+            override fun onFailure(call: Call<List<HighScore>>, t: Throwable) {
+                // Handle failure here, e.g., log error, show error message, etc.
             }
+        })
+        highScores.clear()
+        highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+    } else if (scoresType == stringResource(R.string.local_scores)) {
+        highScores.clear()
+        state.localScores.forEach { localScore ->
+            val highScore = HighScore(
+                user = localScore.date, // Assuming user is a property of your local score
+                score = localScore.score, // Assuming score is a property of your local score
+                time = localScore.time // Assuming time is a property of your local score
+            )
+            highScores.add(highScore)
         }
+
     } else {
         highScores.clear()
         highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
@@ -268,6 +299,6 @@ fun UserInfoRow(
 private fun LeaderboardScreenPreview() {
     ScapeTheAddsTheme {
         val scoresType = stringResource(R.string.local_scores)
-        LeaderboardScreen(scoresType)
+        //LeaderboardScreen(scoresType)
     }
 }
