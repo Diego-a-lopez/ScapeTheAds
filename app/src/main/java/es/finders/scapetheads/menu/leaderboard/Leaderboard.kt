@@ -29,9 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
-import es.finders.scapetheads.services.firestore.FirestoreClient
 import es.finders.scapetheads.services.APIService.ApiClient
 import es.finders.scapetheads.services.APIService.HighScore
+import es.finders.scapetheads.services.firestore.FirestoreClient
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.BasicBackground
@@ -50,12 +50,11 @@ fun LeaderboardScreen(
     val call = ApiClient.apiService.getAllHighScores()
     val highScores = remember { mutableStateListOf<HighScore>() }
 
-
     if (scoresType == stringResource(R.string.global_scores)) {
 
         try {
             firestoreClient.getTopHighscores(10)
-        } finally {
+        } catch (e: Exception) {
             highScores.clear()
             highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
         }

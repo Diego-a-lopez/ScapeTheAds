@@ -108,8 +108,8 @@ class FirestoreClient {
             }
     }
 
-    fun testUpload() {
-        addHighscore(HighScoreData("sample", 0, 0, now().epochSecond))
+    fun addNickname(nickname: String) {
+        addHighscore(HighScoreData(nickname, 0, 0, now().epochSecond))
     }
 
 

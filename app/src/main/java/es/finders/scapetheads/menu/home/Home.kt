@@ -51,7 +51,6 @@ fun HomeScreen(
             Title(
                 Modifier
                     .fillMaxWidth()
-                    .width(100.dp)
             )
             Logo()
             BottomButtonsSection(onSelectLevel, onLeaderboard, onHighscore, onSettings, ctx)

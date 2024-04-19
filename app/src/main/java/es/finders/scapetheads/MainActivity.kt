@@ -129,7 +129,6 @@ class MainActivity : ComponentActivity() {
                         composable("sign_in") {
                             val viewModel = viewModel<SignInViewModel>()
                             val state by viewModel.state.collectAsStateWithLifecycle()
-
                             LaunchedEffect(key1 = Unit) {
                                 if (googleAuthUiClient.getSignedInUser() != null) {
                                     // TODO: Fix return to nickname when user tries to quit
@@ -186,8 +185,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("nickname") {
-                            Log.d("LoginScreen", googleAuthUiClient.getSignedInUser().toString())
-                            firestoreClient.testUpload()
+                            //Log.d("LoginScreen", googleAuthUiClient.getSignedInUser().toString())
+                            // firestoreClient.testUpload()
+
                             NicknameScreen(
                                 onSignOut = {
                                     lifecycleScope.launch {
@@ -202,7 +202,18 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 onNext = {
-                                    navController.navigate("home")
+                                    lifecycleScope.launch {
+                                        if (firestoreClient.checkNicknameExists(it)) {
+                                            Toast.makeText(
+                                                applicationContext,
+                                                "Nickname already chosen",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        } else {
+                                            navController.navigate("home")
+                                            firestoreClient.addNickname(it)
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -210,18 +221,17 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             HomeScreen(
                                 onExit = {
-                                    navController.popBackStack()
-                                    // TODO: Exit app completely
+                                    finishAffinity()
                                 },
                                 onHighscore = {
-                                    navController.navigate("leaderboard")
-                                },
-                                onLeaderboard = {
                                     scoreMode = getString(R.string.local_scores)
                                     navController.navigate("leaderboard")
                                 },
-                                onSelectLevel = {
+                                onLeaderboard = {
                                     scoreMode = getString(R.string.global_scores)
+                                    navController.navigate("leaderboard")
+                                },
+                                onSelectLevel = {
                                     navController.navigate("level_selector")
                                 },
                                 onSettings = {
@@ -241,6 +251,7 @@ class MainActivity : ComponentActivity() {
 
                         composable("leaderboard") {
                             val state by viewModel.state.collectAsState()
+                            Log.d("TEST", scoreMode)
                             LeaderboardScreen(
                                 onExit = {
                                     navController.popBackStack()
