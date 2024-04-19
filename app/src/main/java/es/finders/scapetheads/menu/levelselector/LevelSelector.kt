@@ -46,13 +46,14 @@ private fun LevelSelectorScreenPreview() {
 
 @Composable
 fun LevelSelectorLayout(onExit: () -> Unit, modifier: Modifier = Modifier) {
-
+    // TODO: Add proper level callbacks
+    // TODO: Add exit button
     val buttonModifier = Modifier
         .width(70.dp)
         .padding(4.dp)
         .height(70.dp)
     val ctx = LocalContext.current
-
+    // TODO: Fix hardcoded levels to dynamic view
     Column(
         modifier = modifier
             .padding(4.dp)

@@ -1,4 +1,4 @@
-package es.finders.scapetheads.auth
+package es.finders.scapetheads.services.auth
 
 data class SignInResult(
     val data: UserData?,

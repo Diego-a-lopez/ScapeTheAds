@@ -34,6 +34,7 @@ import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onExit: () -> Unit) {
+    // TODO: Finish settings screen
     Box(
         modifier,
         contentAlignment = Alignment.Center,

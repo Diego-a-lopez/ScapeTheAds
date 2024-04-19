@@ -1,4 +1,4 @@
-package es.finders.scapetheads.firestore
+package es.finders.scapetheads.services.firestore
 
 import android.util.Log
 import com.google.firebase.firestore.Query

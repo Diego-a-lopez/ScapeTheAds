@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,7 +24,7 @@ import es.finders.scapetheads.ui.utils.Logo
 
 @Composable
 fun NicknameScreen(onSignOut: () -> Unit, onNext: () -> Unit, modifier: Modifier = Modifier) {
-    val ctx = LocalContext.current
+    // TODO: Align to bottom
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -42,6 +41,7 @@ fun NicknameScreen(onSignOut: () -> Unit, onNext: () -> Unit, modifier: Modifier
                 .padding(top = 5.dp, bottom = 20.dp)
                 .fillMaxWidth(0.70f)
         )
+        // TODO: Change exit type / log out
         ButtonItem(
             stringResource(R.string.exit),
             onSignOut,
@@ -54,6 +54,7 @@ fun NicknameScreen(onSignOut: () -> Unit, onNext: () -> Unit, modifier: Modifier
 
 @Composable
 fun NicknameInput(modifier: Modifier = Modifier) {
+    // TODO: Fix text input
     OutlinedTextField(
         value = "",
         onValueChange = {},

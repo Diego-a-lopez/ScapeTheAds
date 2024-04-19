@@ -1,4 +1,4 @@
-package es.finders.scapetheads.auth
+package es.finders.scapetheads.services.auth
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

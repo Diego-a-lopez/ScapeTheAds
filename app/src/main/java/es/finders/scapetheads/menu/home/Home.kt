@@ -47,6 +47,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // TODO: Make title bigger
             Title(
                 Modifier
                     .fillMaxWidth()
@@ -56,6 +57,7 @@ fun HomeScreen(
             BottomButtonsSection(onSelectLevel, onLeaderboard, onHighscore, onSettings, ctx)
         }
     }
+    // TODO: Add exit button
 }
 
 @Composable

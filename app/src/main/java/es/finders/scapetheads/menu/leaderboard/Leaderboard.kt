@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
-import es.finders.scapetheads.firestore.FirestoreClient
+import es.finders.scapetheads.services.firestore.FirestoreClient
 import es.finders.scapetheads.services.APIService.ApiClient
 import es.finders.scapetheads.services.APIService.HighScore
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme

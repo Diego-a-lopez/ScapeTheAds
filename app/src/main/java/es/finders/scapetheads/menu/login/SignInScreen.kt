@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import es.finders.scapetheads.R
-import es.finders.scapetheads.auth.SignInState
+import es.finders.scapetheads.services.auth.SignInState
 import es.finders.scapetheads.ui.utils.ButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 
@@ -53,8 +53,11 @@ fun SignInScreen(
     ) {
         Logo()
         Spacer(Modifier.size(100.dp))
+        // TODO: Fix text input
+        // TODO: Add login via email/password and/or anonymous
         BasicInput()
         Spacer(Modifier.size(16.dp))
+        // TODO: Fix text input
         PasswordInput()
         Spacer(Modifier.size(16.dp))
         ButtonItem(
@@ -65,6 +68,7 @@ fun SignInScreen(
                 .fillMaxWidth(0.70f)
         )
         Spacer(Modifier.size(16.dp))
+        // TODO: Add text "or" to imply that you can sign in with email/pass or google
         Button(
             onClick = onSignInClick,
             modifier = Modifier
@@ -79,8 +83,12 @@ fun SignInScreen(
                 painter = painterResource(id = R.drawable.ic_logo_google),
                 contentDescription = ""
             )
-            Text(text = stringResource(R.string.sign_in_with_google), modifier = Modifier.padding(6.dp))
+            Text(
+                text = stringResource(R.string.sign_in_with_google),
+                modifier = Modifier.padding(6.dp)
+            )
         }
+        // TODO: Add quit
     }
 }
 

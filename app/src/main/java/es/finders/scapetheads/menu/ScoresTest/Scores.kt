@@ -1,9 +1,6 @@
 package es.finders.scapetheads.menu.ScoresTest
 
 import android.annotation.SuppressLint
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -23,31 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import es.finders.scapetheadds.AndroidRoom.LocalScoreState
-import es.finders.scapetheads.R
 import es.finders.scapetheads.services.AndroidRoom.AddScoreDialog
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreEvent
 import es.finders.scapetheads.services.AndroidRoom.ScoreSortType
-import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
-
-class Scores : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            val scoresType =
-                intent.getStringExtra("scoresType") ?: stringResource(R.string.global_scores)
-            //val scoresType = stringResource(R.string.global_scores)
-            ScapeTheAddsTheme {
-                //val state by viewModel.state.collectAsState()
-                //ScoreScreen(state = state, ctx = LocalContext.current, onEvent = viewModel::onEvent)
-            }
-        }
-    }
-}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -55,7 +33,7 @@ fun ScoreScreen(
     state: LocalScoreState,
     onEvent: (LocalScoreEvent) -> Unit
 ) {
-
+    // TODO: Remove or use
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {

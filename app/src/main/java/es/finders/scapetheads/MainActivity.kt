@@ -30,9 +30,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.google.android.gms.auth.api.identity.Identity
-import es.finders.scapetheads.auth.GoogleAuthClient
-import es.finders.scapetheads.auth.SignInViewModel
-import es.finders.scapetheads.firestore.FirestoreClient
 import es.finders.scapetheads.menu.Defeat.DefeatScreen
 import es.finders.scapetheads.menu.Victory.VictoryScreen
 import es.finders.scapetheads.menu.home.HomeScreen
@@ -43,7 +40,10 @@ import es.finders.scapetheads.menu.nickname.NicknameScreen
 import es.finders.scapetheads.menu.settings.SettingsScreen
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
-import es.finders.scapetheads.services.UnityBridge
+import es.finders.scapetheads.services.auth.GoogleAuthClient
+import es.finders.scapetheads.services.auth.SignInViewModel
+import es.finders.scapetheads.services.firestore.FirestoreClient
+import es.finders.scapetheads.services.unity.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
 import kotlinx.coroutines.launch
@@ -112,6 +112,7 @@ class MainActivity : ComponentActivity() {
         mBound = false
     }
 
+    // TODO: Fix typography, font looks bad
     override fun onCreate(savedInstanceState: Bundle?) {
         var scoreMode: String = getString(R.string.local_scores)
         super.onCreate(savedInstanceState)
@@ -131,6 +132,7 @@ class MainActivity : ComponentActivity() {
 
                             LaunchedEffect(key1 = Unit) {
                                 if (googleAuthUiClient.getSignedInUser() != null) {
+                                    // TODO: Fix return to nickname when user tries to quit
                                     // TODO: Check if used has nickname locally
                                     // If he does go to Home
                                     // Else
@@ -209,6 +211,7 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(
                                 onExit = {
                                     navController.popBackStack()
+                                    // TODO: Exit app completely
                                 },
                                 onHighscore = {
                                     navController.navigate("leaderboard")
@@ -228,6 +231,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("level_selector") {
+                            // TODO: Add launch Victory or Defeat depending on unityBridge result
                             LevelSelectorScreen(
                                 onExit = {
                                     navController.popBackStack()
