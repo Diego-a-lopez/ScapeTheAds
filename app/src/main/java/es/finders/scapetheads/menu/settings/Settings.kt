@@ -1,11 +1,7 @@
 package es.finders.scapetheads.menu.settings
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,40 +25,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import es.finders.scapetheads.R
-import es.finders.scapetheads.menu.home.Home
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
-import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.ButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
-class SettingsActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ScapeTheAddsTheme {
-                SettingsScreen()
-            }
-        }
-    }
-}
-
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
+fun SettingsScreen(modifier: Modifier = Modifier, onExit: () -> Unit) {
     Box(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        BasicBackground(modifier.fillMaxSize())
-        SettingsScreenLayout(modifier.fillMaxSize())
+        SettingsScreenLayout(modifier.fillMaxSize(), onExit)
     }
 }
 
 @Composable
-fun SettingsScreenLayout(modifier: Modifier = Modifier) {
+fun SettingsScreenLayout(modifier: Modifier = Modifier, onExit: () -> Unit) {
     val ctx = LocalContext.current
     Column(
         modifier = modifier
@@ -71,9 +52,7 @@ fun SettingsScreenLayout(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.SpaceAround,
 
         ) {
-        BackButton({
-            ContextCompat.startActivity(ctx, Intent(ctx, Home::class.java), null)
-        })
+        BackButton(onExit)
         OutlineTextSection(
             stringResource(R.string.settings),
             textSize = MaterialTheme.typography.displayMedium.fontSize
@@ -200,6 +179,6 @@ fun ThemeSettings(ctx: Context) {
 @Composable
 fun SettingsPreview() {
     ScapeTheAddsTheme {
-        SettingsScreen()
+        SettingsScreen(onExit = { println("Exit") })
     }
 }

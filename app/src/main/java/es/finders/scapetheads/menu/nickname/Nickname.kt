@@ -1,14 +1,8 @@
 package es.finders.scapetheads.menu.nickname
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,17 +18,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import es.finders.scapetheads.R
-import es.finders.scapetheads.menu.home.Home
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
-import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.ButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 
 @Composable
-fun NicknameScreen(modifier: Modifier = Modifier,
-                   onSignOut: () -> Unit) {
+fun NicknameScreen(onSignOut: () -> Unit, onNext: () -> Unit, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     Column(
         modifier = modifier,
@@ -47,9 +37,7 @@ fun NicknameScreen(modifier: Modifier = Modifier,
         Spacer(Modifier.size(16.dp))
         ButtonItem(
             stringResource(R.string.next),
-            {
-                ContextCompat.startActivity(ctx, Intent(ctx, Home::class.java), null)
-            },
+            onNext,
             Modifier
                 .padding(top = 5.dp, bottom = 20.dp)
                 .fillMaxWidth(0.70f)
@@ -83,6 +71,6 @@ fun NicknameInput(modifier: Modifier = Modifier) {
 @Composable
 private fun NicknameScreenPreview() {
     ScapeTheAddsTheme {
-        NicknameScreen(onSignOut = {})
+        NicknameScreen(onSignOut = {}, onNext = {})
     }
 }

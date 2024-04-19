@@ -1,11 +1,7 @@
 package es.finders.scapetheads.menu.leaderboard
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,36 +29,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import es.finders.scapetheads.AndroidRoom.HighScore
 import es.finders.scapetheads.R
 import es.finders.scapetheads.localScores.LocalScoreManager
-import es.finders.scapetheads.menu.home.Home
 import es.finders.scapetheads.menu.leaderborad.HighScoreViewModel
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
-import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-// Layout + App functionality
-class Leaderboard : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            val scoresType =
-                intent.getStringExtra("scoresType") ?: stringResource(R.string.global_scores)
-            //val scoresType = stringResource(R.string.global_scores)
-            ScapeTheAddsTheme {
-                LeaderboardScreen(scoresType)
-            }
-        }
-    }
-}
+// Layout
 
 @Composable
-fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
+fun LeaderboardScreen(scoresType: String, onExit: () -> Unit, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     val viewModel = remember { HighScoreViewModel() }
     val localScoreManager = remember { LocalScoreManager(ctx) }
@@ -120,8 +100,7 @@ fun LeaderboardScreen(scoresType: String, modifier: Modifier = Modifier) {
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        BasicBackground(modifier.fillMaxSize())
-        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), highScores)
+        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), highScores, onExit)
     }
 }
 
@@ -131,6 +110,7 @@ fun LeaderboardLayout(
     scoresType: String,
     modifier: Modifier = Modifier,
     highScores: List<HighScore>,
+    onExit: () -> Unit,
 ) {
     // Variables for styling
     val containerColor = MaterialTheme.colorScheme.surface
@@ -143,9 +123,7 @@ fun LeaderboardLayout(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Upper Left Arrow to go back to home screen
-        BackButton({
-            ContextCompat.startActivity(ctx, Intent(ctx, Home::class.java), null)
-        })
+        BackButton(onExit)
 
         // Container for user info rows
         // Load local or global scores based on scoresType
@@ -268,6 +246,6 @@ fun UserInfoRow(
 private fun LeaderboardScreenPreview() {
     ScapeTheAddsTheme {
         val scoresType = stringResource(R.string.local_scores)
-        LeaderboardScreen(scoresType)
+        LeaderboardScreen(scoresType, {})
     }
 }

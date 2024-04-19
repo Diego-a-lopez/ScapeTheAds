@@ -1,13 +1,7 @@
 package es.finders.scapetheads.menu.home
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.Bundle
-import android.os.IBinder
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,95 +20,52 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import es.finders.scapetheads.R
-import es.finders.scapetheads.menu.leaderboard.Leaderboard
 import es.finders.scapetheads.menu.level.Level
-import es.finders.scapetheads.menu.levelselector.LevelSelector
-import es.finders.scapetheads.menu.settings.SettingsActivity
-import es.finders.scapetheads.services.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
-import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.ButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 import es.finders.scapetheads.ui.utils.Title
-import org.json.JSONObject
-
-class Home : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ScapeTheAddsTheme {
-                HomeScreen()
-            }
-        }
-    }
-
-    private lateinit var mService: UnityBridge
-    private var mBound: Boolean = false
-
-    private val connection = object : ServiceConnection {
-
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as UnityBridge.LocalBinder
-            mService = binder.getService()
-            mBound = true
-            mService.setMode(JSONObject().apply {
-                put("gamemode", "infinite")
-            })
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            mBound = false
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        // Bind to LocalService.
-        Intent(this, UnityBridge::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
-        mBound = false
-    }
-}
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    onExit: () -> Unit,
+    onSelectLevel: () -> Unit,
+    onLeaderboard: () -> Unit,
+    onHighscore: () -> Unit,
+    onSettings: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val ctx = LocalContext.current
     Box(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        BasicBackground(modifier.fillMaxSize())
-        HomeLayout(modifier.fillMaxSize())
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Title(
+                Modifier
+                    .fillMaxWidth()
+                    .width(100.dp)
+            )
+            Logo()
+            BottomButtonsSection(onSelectLevel, onLeaderboard, onHighscore, onSettings, ctx)
+        }
     }
 }
 
 @Composable
-fun HomeLayout(modifier: Modifier = Modifier) {
-    val ctx = LocalContext.current
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceAround,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Title(
-            Modifier
-                .fillMaxWidth()
-                .width(100.dp)
-        )
-        Logo()
-        BottomButtonsSection(ctx)
-    }
-}
-
-@Composable
-fun BottomButtonsSection(ctx: Context) {
+fun BottomButtonsSection(
+    onSelectLevel: () -> Unit,
+    onLeaderboard: () -> Unit,
+    onHighscore: () -> Unit,
+    onSettings: () -> Unit,
+    ctx: Context
+) {
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
         .fillMaxWidth()
@@ -130,32 +81,12 @@ fun BottomButtonsSection(ctx: Context) {
                 null
             )
         }, buttonModifier)
-        ButtonItem(text = stringResource(R.string.select_level), {
-            ContextCompat.startActivity(ctx, Intent(ctx, LevelSelector::class.java), null)
-        }, buttonModifier)
+        ButtonItem(text = stringResource(R.string.select_level), onSelectLevel, buttonModifier)
         val localtext = stringResource(R.string.local_scores)
-        ButtonItem(text = localtext, {
-            ContextCompat.startActivity(
-                ctx,
-                Intent(ctx, Leaderboard::class.java).apply {
-                    putExtra("scoresType", localtext)
-                },
-                null
-            )
-        }, buttonModifier)
+        ButtonItem(text = localtext, onHighscore, buttonModifier)
         val globaltext = stringResource(R.string.global_scores)
-        ButtonItem(text = globaltext, {
-            ContextCompat.startActivity(
-                ctx,
-                Intent(ctx, Leaderboard::class.java).apply {
-                    putExtra("scoresType", globaltext)
-                },
-                null
-            )
-        }, buttonModifier)
-        ButtonItem(text = stringResource(R.string.settings), {
-            ContextCompat.startActivity(ctx, Intent(ctx, SettingsActivity::class.java), null)
-        }, buttonModifier)
+        ButtonItem(text = globaltext, onLeaderboard, buttonModifier)
+        ButtonItem(text = stringResource(R.string.settings), onSettings, buttonModifier)
     }
 }
 
@@ -163,6 +94,6 @@ fun BottomButtonsSection(ctx: Context) {
 @Composable
 fun HomePreview() {
     ScapeTheAddsTheme {
-        HomeScreen()
+        HomeScreen({}, {}, {}, {}, {})
     }
 }

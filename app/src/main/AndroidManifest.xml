@@ -31,15 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".menu.home.Home" />
         <activity android:name=".menu.level.Level" />
-        <activity android:name=".menu.levelselector.LevelSelector" />
-        <activity android:name=".menu.Victory.Victory" />
-        <activity android:name=".menu.Defeat.Defeat" />
-        <activity android:name=".menu.leaderboard.Leaderboard" />
-        <activity android:name=".menu.settings.SettingsActivity" />
-        <activity android:name=".menu.highscores.Highscores" />
-        <activity android:name="es.finders.scapetheads.menu.login.Login" />
     </application>
 
 </manifest>
