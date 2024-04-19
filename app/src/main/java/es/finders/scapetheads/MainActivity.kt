@@ -13,17 +13,22 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
 import com.google.android.gms.auth.api.identity.Identity
 import es.finders.scapetheads.auth.GoogleAuthClient
 import es.finders.scapetheads.auth.SignInViewModel
@@ -36,6 +41,8 @@ import es.finders.scapetheads.menu.levelselector.LevelSelectorScreen
 import es.finders.scapetheads.menu.login.SignInScreen
 import es.finders.scapetheads.menu.nickname.NicknameScreen
 import es.finders.scapetheads.menu.settings.SettingsScreen
+import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
+import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
 import es.finders.scapetheads.services.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
@@ -43,8 +50,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
-
-    private var scoreMode: String = getString(R.string.local_scores)
 
     private val googleAuthUiClient by lazy {
         GoogleAuthClient(
@@ -57,11 +62,28 @@ class MainActivity : ComponentActivity() {
         FirestoreClient()
     }
 
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            LocalScoreDatabase::class.java,
+            "localscores.db"
+        ).build()
+    }
+
+    private val viewModel by viewModels<LocalScoreViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return LocalScoreViewModel(db.dao) as T
+                }
+            }
+        }
+    )
+
     private lateinit var mService: UnityBridge
     private var mBound: Boolean = false
 
     private val connection = object : ServiceConnection {
-
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as UnityBridge.LocalBinder
             mService = binder.getService()
@@ -90,8 +112,8 @@ class MainActivity : ComponentActivity() {
         mBound = false
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        var scoreMode: String = getString(R.string.local_scores)
         super.onCreate(savedInstanceState)
         val intent = Intent(this, UnityBridge::class.java)
         startService(intent)
@@ -177,7 +199,9 @@ class MainActivity : ComponentActivity() {
                                         navController.popBackStack()
                                     }
                                 },
-                                onNext = {}
+                                onNext = {
+                                    navController.navigate("home")
+                                }
                             )
                         }
 
@@ -212,10 +236,14 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("leaderboard") {
-                            LeaderboardScreen(scoreMode,
+                            val state by viewModel.state.collectAsState()
+                            LeaderboardScreen(
                                 onExit = {
                                     navController.popBackStack()
-                                }
+                                },
+                                scoresType = scoreMode,
+                                state = state,
+                                firestoreClient = firestoreClient
                             )
                         }
 

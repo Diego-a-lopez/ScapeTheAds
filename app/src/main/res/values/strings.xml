@@ -26,4 +26,5 @@
     <string name="sign_in_with_google">Inciar sesión con Google</string>
     <string name="signed_out">Signed out</string>
     <string name="exit">Exit</string>
+    <string name="date">Date</string>
 </resources>

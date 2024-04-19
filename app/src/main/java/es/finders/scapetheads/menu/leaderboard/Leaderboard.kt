@@ -1,6 +1,5 @@
 package es.finders.scapetheads.menu.leaderboard
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,66 +27,55 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import es.finders.scapetheads.AndroidRoom.HighScore
+import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
-import es.finders.scapetheads.localScores.LocalScoreManager
-import es.finders.scapetheads.menu.leaderborad.HighScoreViewModel
+import es.finders.scapetheads.firestore.FirestoreClient
+import es.finders.scapetheads.services.APIService.ApiClient
+import es.finders.scapetheads.services.APIService.HighScore
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
+import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.OutlineTextSection
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-// Layout
 
 @Composable
-fun LeaderboardScreen(scoresType: String, onExit: () -> Unit, modifier: Modifier = Modifier) {
+fun LeaderboardScreen(
+    onExit: () -> Unit,
+    scoresType: String,
+    modifier: Modifier = Modifier,
+    state: LocalScoreState,
+    firestoreClient: FirestoreClient
+) {
     val ctx = LocalContext.current
-    val viewModel = remember { HighScoreViewModel() }
-    val localScoreManager = remember { LocalScoreManager(ctx) }
+    //val call = ApiClient.apiService.getScoreByUserName("John")//ApiClient.apiService.getHighScores(10)
+    val call = ApiClient.apiService.getAllHighScores()
     val highScores = remember { mutableStateListOf<HighScore>() }
 
-    // Fetch high scores when the screen is created
-    if (scoresType == stringResource(R.string.local_scores)) {
-        LaunchedEffect(Unit) {
-            try {
-                highScores.clear()
-                highScores.addAll(localScoreManager.retrieveScores())
-            } catch (e: Exception) {
-                // If there's an exception, add a single high score indicating failure
-                highScores.clear()
-                highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        ctx,
-                        "Failed to retrieve scores: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
+
+    if (scoresType == stringResource(R.string.global_scores)) {
+
+        try {
+            firestoreClient.getTopHighscores(10)
+        } finally {
+            highScores.clear()
+            highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
         }
-    } else if (scoresType == stringResource(R.string.global_scores)) {
-        LaunchedEffect(Unit) {
-            try {
-                viewModel.getHighScores()
-                highScores.clear()
-                highScores.addAll(viewModel.highScores)
-            } catch (e: Exception) {
-                // If there's an exception, add a single high score indicating failure
-                highScores.clear()
-                highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        ctx,
-                        "Failed to retrieve scores: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
+
+    } else if (scoresType == stringResource(R.string.local_scores)) {
+        highScores.clear()
+        state.localScores.forEach { localScore ->
+            val highScore = HighScore(
+
+                user = localScore.nickname, // Assuming user is a property of your local score
+                date = localScore.date,
+                score = localScore.score, // Assuming score is a property of your local score
+                time = localScore.time // Assuming time is a property of your local score
+            )
+            highScores.add(highScore)
         }
+
     } else {
         highScores.clear()
-        highScores.add(HighScore("Failed to retrieve scores", "0", "0"))
+        highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
         Toast.makeText(
             ctx,
             "Failed to retrieve scores: Score type undefined",
@@ -100,17 +87,17 @@ fun LeaderboardScreen(scoresType: String, onExit: () -> Unit, modifier: Modifier
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), highScores, onExit)
+        BasicBackground(modifier.fillMaxSize())
+        LeaderboardLayout(onExit, scoresType, modifier.fillMaxSize(), highScores)
     }
 }
 
 @Composable
 fun LeaderboardLayout(
-    ctx: Context,
+    onExit: () -> Unit,
     scoresType: String,
     modifier: Modifier = Modifier,
     highScores: List<HighScore>,
-    onExit: () -> Unit,
 ) {
     // Variables for styling
     val containerColor = MaterialTheme.colorScheme.surface
@@ -153,6 +140,7 @@ fun LocalScoresContainer(
         // Each row wrapped in a Surface container
         UserInfoRow(
             stringResource(R.string.user_name),
+            stringResource(R.string.date),
             stringResource(R.string.score),
             stringResource(R.string.time),
             containerOutlineColor
@@ -163,7 +151,7 @@ fun LocalScoresContainer(
                 .verticalScroll(rememberScrollState())
         ) {
             localScores.forEach { score ->
-                UserInfoRow(score.user, score.score, score.time, containerOutlineColor)
+                UserInfoRow(score.user, score.date, score.score, score.time, containerOutlineColor)
                 Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
             }
         }
@@ -186,6 +174,7 @@ fun GlobalScoresContainer(
         // Each row wrapped in a Surface container
         UserInfoRow(
             stringResource(R.string.user_name),
+            stringResource(R.string.date),
             stringResource(R.string.score),
             stringResource(R.string.time),
             containerOutlineColor
@@ -198,7 +187,7 @@ fun GlobalScoresContainer(
 
             highScores.forEach { score ->
                 //UserInfoRow("Global John Doe", "100", "100", containerOutlineColor)
-                UserInfoRow(score.user, score.score, score.time, containerOutlineColor)
+                UserInfoRow(score.user, score.date, score.score, score.time, containerOutlineColor)
                 Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
             }
         }
@@ -210,6 +199,7 @@ fun GlobalScoresContainer(
 @Composable
 fun UserInfoRow(
     user: String,
+    date: String,
     score: String,
     time: String,
     textColor: Color
@@ -229,6 +219,8 @@ fun UserInfoRow(
         ) {
             Text(text = user, color = textColor)
             Spacer(modifier = Modifier.weight(1f))
+            Text(text = date, color = textColor)
+            Spacer(modifier = Modifier.weight(1f))
             Text(text = score, color = textColor)
             Spacer(modifier = Modifier.width(scorePaddingValue))
             Text(text = stringResource(R.string.points), color = textColor)
@@ -246,6 +238,6 @@ fun UserInfoRow(
 private fun LeaderboardScreenPreview() {
     ScapeTheAddsTheme {
         val scoresType = stringResource(R.string.local_scores)
-        LeaderboardScreen(scoresType, {})
+        //LeaderboardScreen(scoresType)
     }
 }
