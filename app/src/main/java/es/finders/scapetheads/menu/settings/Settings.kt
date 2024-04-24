@@ -33,7 +33,13 @@ import es.finders.scapetheads.ui.utils.Logo
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier, onExit: () -> Unit) {
+fun SettingsScreen(modifier: Modifier = Modifier,
+                   onExit: () -> Unit,
+                   onSpanish: () -> Unit,
+                   onEnglish: () -> Unit,
+                   onVolume: () -> Unit,
+                   onTheme: () -> Unit
+                   ) {
     // TODO: Finish settings screen
     Box(
         modifier,
@@ -180,6 +186,11 @@ fun ThemeSettings(ctx: Context) {
 @Composable
 fun SettingsPreview() {
     ScapeTheAddsTheme {
-        SettingsScreen(onExit = { println("Exit") })
+        SettingsScreen(
+            onExit = { println("Exit") },
+            onEnglish = { println("English") },
+            onSpanish = { println("English") },
+            onVolume = { println("Volume") },
+            onTheme = { println("Theme") })
     }
 }

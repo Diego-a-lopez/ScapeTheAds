@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,6 +51,10 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
+
+
+    private val Context.dataStore by preferencesDataStore(name = "settings")
+
 
     private val googleAuthUiClient by lazy {
         GoogleAuthClient(
@@ -266,6 +271,34 @@ class MainActivity : ComponentActivity() {
                             SettingsScreen(
                                 onExit = {
                                     navController.popBackStack()
+                                },
+                                onEnglish = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "English",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                },
+                                onSpanish = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Spanish",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                },
+                                onVolume = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Volume",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                },
+                                onTheme = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Theme",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                             )
                         }
