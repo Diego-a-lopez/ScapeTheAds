@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
         Room.databaseBuilder(
             applicationContext,
             LocalScoreDatabase::class.java,
-            "localscores.db"
+            "localScores.db"
         ).build()
     }
 
@@ -250,6 +250,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("leaderboard") {
+                            // TODO: Check if state reloads correctly when new scores are added
                             val state by viewModel.state.collectAsState()
                             Log.d("TEST", scoreMode)
                             LeaderboardScreen(
