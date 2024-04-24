@@ -20,6 +20,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -48,12 +51,19 @@ import es.finders.scapetheads.services.unity.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
 
 
     private val Context.dataStore by preferencesDataStore(name = "settings")
+
+    private object PreferencesKeys {
+        val LANGUAGE_KEY = stringPreferencesKey("language")
+        val VOLUME_KEY = intPreferencesKey("volume")
+        val THEME_KEY = stringPreferencesKey("theme")
+    }
 
 
     private val googleAuthUiClient by lazy {
@@ -103,6 +113,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    suspend fun initiateDataStore() {
+        applicationContext.dataStore.edit { settings ->
+            settings[PreferencesKeys.LANGUAGE_KEY] = "English"
+            settings[PreferencesKeys.VOLUME_KEY] = 100
+            settings[PreferencesKeys.THEME_KEY] = "Light"
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         // Bind to LocalService.
@@ -123,6 +141,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val intent = Intent(this, UnityBridge::class.java)
         startService(intent)
+
+        //TODO: better way to do this? (runBlocking)
+        //maybe this is enough tho, since it is a light operation
+        runBlocking {
+            initiateDataStore()
+        }
         setContent {
             ScapeTheAddsTheme {
                 Surface(
