@@ -6,36 +6,40 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import es.finders.scapetheads.R
 import es.finders.scapetheads.services.auth.SignInState
-import es.finders.scapetheads.ui.utils.ButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 
 @Composable
 fun SignInScreen(
     state: SignInState,
+    onExit: () -> Unit,
     onSignInClick: () -> Unit
 ) {
     val context = LocalContext.current
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     LaunchedEffect(key1 = state.signInError) {
         state.signInError?.let { error ->
             Toast.makeText(
@@ -53,12 +57,31 @@ fun SignInScreen(
     ) {
         Logo()
         Spacer(Modifier.size(100.dp))
-        // TODO: Fix text input
         // TODO: Add login via email/password and/or anonymous
-        BasicInput()
+        /*OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            modifier = Modifier,
+            placeholder = { Text(text = stringResource(R.string.email)) },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White
+            ),
+            shape = RoundedCornerShape(35),
+        )
         Spacer(Modifier.size(16.dp))
-        // TODO: Fix text input
-        PasswordInput()
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            modifier = Modifier,
+            placeholder = { Text(text = stringResource(R.string.password)) },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+            ),
+            shape = RoundedCornerShape(35),
+            visualTransformation = PasswordVisualTransformation() // Hide password characters
+        )
         Spacer(Modifier.size(16.dp))
         ButtonItem(
             stringResource(R.string.next),
@@ -67,8 +90,8 @@ fun SignInScreen(
                 .padding(top = 5.dp, bottom = 20.dp)
                 .fillMaxWidth(0.70f)
         )
-        Spacer(Modifier.size(16.dp))
-        // TODO: Add text "or" to imply that you can sign in with email/pass or google
+        Spacer(Modifier.size(16.dp))*/
+        // Text(text = stringResource(R.string.or))
         Button(
             onClick = onSignInClick,
             modifier = Modifier
@@ -88,37 +111,12 @@ fun SignInScreen(
                 modifier = Modifier.padding(6.dp)
             )
         }
-        // TODO: Add quit
+
+        /*Spacer(Modifier.size(16.dp))
+        ButtonItem(
+            text = stringResource(R.string.exit), onExit, Modifier
+                .padding(top = 5.dp, bottom = 20.dp)
+                .fillMaxWidth(0.70f)
+        )*/
     }
-}
-
-@Composable
-fun BasicInput(modifier: Modifier = Modifier) {
-    OutlinedTextField(
-        value = "",
-        onValueChange = {},
-        modifier = Modifier,
-        placeholder = { Text(text = stringResource(R.string.email)) },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
-        ),
-        shape = RoundedCornerShape(35),
-    )
-}
-
-@Composable
-fun PasswordInput(modifier: Modifier = Modifier) {
-    OutlinedTextField(
-        value = "",
-        onValueChange = {},
-        modifier = Modifier,
-        placeholder = { Text(text = stringResource(R.string.password)) },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-        ),
-        shape = RoundedCornerShape(35),
-        visualTransformation = PasswordVisualTransformation() // Hide password characters
-    )
 }

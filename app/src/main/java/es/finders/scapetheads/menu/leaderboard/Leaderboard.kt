@@ -34,7 +34,6 @@ import es.finders.scapetheads.services.APIService.HighScore
 import es.finders.scapetheads.services.firestore.FirestoreClient
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
-import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @Composable
@@ -88,7 +87,6 @@ fun LeaderboardScreen(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        BasicBackground(modifier.fillMaxSize())
         LeaderboardLayout(onExit, scoresType, modifier.fillMaxSize(), highScores)
     }
 }

@@ -20,6 +20,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +36,7 @@ import es.finders.scapetheads.menu.Defeat.DefeatScreen
 import es.finders.scapetheads.menu.Victory.VictoryScreen
 import es.finders.scapetheads.menu.home.HomeScreen
 import es.finders.scapetheads.menu.leaderboard.LeaderboardScreen
+import es.finders.scapetheads.menu.level.Level
 import es.finders.scapetheads.menu.levelselector.LevelSelectorScreen
 import es.finders.scapetheads.menu.login.SignInScreen
 import es.finders.scapetheads.menu.nickname.NicknameScreen
@@ -80,15 +83,15 @@ class MainActivity : ComponentActivity() {
         }
     )
 
-    private lateinit var mService: UnityBridge
+    private lateinit var unityBridge: UnityBridge
     private var mBound: Boolean = false
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as UnityBridge.LocalBinder
-            mService = binder.getService()
+            unityBridge = binder.getService()
             mBound = true
-            mService.setMode(JSONObject().apply {
+            unityBridge.setMode(JSONObject().apply {
                 put("gamemode", "level")
             })
         }
@@ -115,6 +118,7 @@ class MainActivity : ComponentActivity() {
     // TODO: Fix typography, font looks bad
     override fun onCreate(savedInstanceState: Bundle?) {
         var scoreMode: String = getString(R.string.local_scores)
+
         super.onCreate(savedInstanceState)
         val intent = Intent(this, UnityBridge::class.java)
         startService(intent)
@@ -125,6 +129,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     BasicBackground(Modifier.fillMaxSize())
                     val navController = rememberNavController()
+                    val ctx = LocalContext.current
                     NavHost(navController = navController, startDestination = "sign_in") {
                         composable("sign_in") {
                             val viewModel = viewModel<SignInViewModel>()
@@ -162,7 +167,8 @@ class MainActivity : ComponentActivity() {
                                     ).show()
 
                                     // TODO: Check if used has nickname locally
-                                    // If he does go to Home
+                                    // If he does
+                                    // navController.navigate("home")
                                     // Else
                                     navController.navigate("nickname")
                                     viewModel.resetState()
@@ -171,6 +177,9 @@ class MainActivity : ComponentActivity() {
 
                             SignInScreen(
                                 state = state,
+                                onExit = {
+                                    finishAffinity()
+                                },
                                 onSignInClick = {
                                     lifecycleScope.launch {
                                         val signInIntentSender = googleAuthUiClient.signIn()
@@ -185,22 +194,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("nickname") {
-                            //Log.d("LoginScreen", googleAuthUiClient.getSignedInUser().toString())
-                            // firestoreClient.testUpload()
-
                             NicknameScreen(
-                                onSignOut = {
-                                    lifecycleScope.launch {
-                                        googleAuthUiClient.signOut()
-                                        Toast.makeText(
-                                            applicationContext,
-                                            getString(R.string.signed_out),
-                                            Toast.LENGTH_LONG
-                                        ).show()
-
-                                        navController.popBackStack()
-                                    }
-                                },
                                 onNext = {
                                     lifecycleScope.launch {
                                         if (firestoreClient.checkNicknameExists(it)) {
@@ -221,6 +215,14 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             HomeScreen(
                                 onExit = {
+                                    lifecycleScope.launch {
+                                        googleAuthUiClient.signOut()
+                                        Toast.makeText(
+                                            applicationContext,
+                                            getString(R.string.signed_out),
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                     finishAffinity()
                                 },
                                 onHighscore = {
@@ -234,6 +236,14 @@ class MainActivity : ComponentActivity() {
                                 onSelectLevel = {
                                     navController.navigate("level_selector")
                                 },
+                                onPlay = {
+                                    unityBridge.setInfinite()
+                                    ContextCompat.startActivity(
+                                        ctx,
+                                        Intent(ctx, Level::class.java),
+                                        null
+                                    )
+                                },
                                 onSettings = {
                                     navController.navigate("settings")
                                 }
@@ -245,6 +255,14 @@ class MainActivity : ComponentActivity() {
                             LevelSelectorScreen(
                                 onExit = {
                                     navController.popBackStack()
+                                },
+                                onLevelSelected = {
+                                    unityBridge.setLevel(it.id)
+                                    ContextCompat.startActivity(
+                                        ctx,
+                                        Intent(ctx, Level::class.java),
+                                        null
+                                    )
                                 }
                             )
                         }
