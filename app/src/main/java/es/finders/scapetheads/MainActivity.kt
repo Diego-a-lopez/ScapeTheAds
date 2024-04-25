@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -50,6 +51,8 @@ import es.finders.scapetheads.services.firestore.FirestoreClient
 import es.finders.scapetheads.services.unity.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
@@ -62,7 +65,7 @@ class MainActivity : ComponentActivity() {
     private object PreferencesKeys {
         val LANGUAGE_KEY = stringPreferencesKey("language")
         val VOLUME_KEY = intPreferencesKey("volume")
-        val THEME_KEY = stringPreferencesKey("theme")
+        val THEME_KEY = booleanPreferencesKey("theme")
     }
 
 
@@ -116,8 +119,8 @@ class MainActivity : ComponentActivity() {
     suspend fun initiateDataStore() {
         applicationContext.dataStore.edit { settings ->
             settings[PreferencesKeys.LANGUAGE_KEY] = "English"
-            settings[PreferencesKeys.VOLUME_KEY] = 100
-            settings[PreferencesKeys.THEME_KEY] = "Light"
+            settings[PreferencesKeys.VOLUME_KEY] = 50
+            settings[PreferencesKeys.THEME_KEY] = false
         }
     }
 
@@ -291,39 +294,73 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        //Flow variable to the settings datastore to read is values  and pass them to the settings screen
+
+                        val preferencesLanguageFlow: Flow<String> = dataStore.data.map { preferences ->
+                                preferences[PreferencesKeys.LANGUAGE_KEY]?: "English"
+                            }
+                        val preferencesVolumeFlow: Flow<Int> = dataStore.data.map { preferences ->
+                            preferences[PreferencesKeys.VOLUME_KEY]?: 50
+                        }
+                        val preferencesThemeFlow: Flow<Boolean> = dataStore.data.map { preferences ->
+                            preferences[PreferencesKeys.THEME_KEY]?: false
+                        }
                         composable("settings") {
                             SettingsScreen(
                                 onExit = {
                                     navController.popBackStack()
                                 },
                                 onEnglish = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.LANGUAGE_KEY] = "English"
+                                        }
+                                    }
                                     Toast.makeText(
                                         applicationContext,
                                         "English",
-                                        Toast.LENGTH_LONG
+                                        Toast.LENGTH_SHORT
                                     ).show()
                                 },
                                 onSpanish = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.LANGUAGE_KEY] = "Spanish"
+                                        }
+                                    }
                                     Toast.makeText(
                                         applicationContext,
                                         "Spanish",
-                                        Toast.LENGTH_LONG
+                                        Toast.LENGTH_SHORT
                                     ).show()
                                 },
+                                preferencesLanguageFlow = preferencesLanguageFlow,
                                 onVolume = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.VOLUME_KEY] = it
+                                        }
+                                    }
                                     Toast.makeText(
                                         applicationContext,
-                                        "Volume",
-                                        Toast.LENGTH_LONG
+                                        "Volume changed to $it%",
+                                        Toast.LENGTH_SHORT
                                     ).show()
                                 },
+                                preferencesVolumeFlow = preferencesVolumeFlow,
                                 onTheme = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.THEME_KEY] = it
+                                        }
+                                    }
                                     Toast.makeText(
                                         applicationContext,
-                                        "Theme",
-                                        Toast.LENGTH_LONG
+                                        "Theme changed to ${if (it) "Dark" else "Light"}",
+                                        Toast.LENGTH_SHORT
                                     ).show()
-                                }
+                                },
+                                preferencesThemeFlow = preferencesThemeFlow
                             )
                         }
 
