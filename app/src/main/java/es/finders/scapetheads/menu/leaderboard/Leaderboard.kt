@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,12 +30,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
-import es.finders.scapetheads.firestore.FirestoreClient
-import es.finders.scapetheads.services.APIService.ApiClient
 import es.finders.scapetheads.services.APIService.HighScore
+import es.finders.scapetheads.services.firestore.FirestoreClient
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
-import es.finders.scapetheads.ui.utils.BasicBackground
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @Composable
@@ -46,20 +45,21 @@ fun LeaderboardScreen(
     firestoreClient: FirestoreClient
 ) {
     val ctx = LocalContext.current
-    //val call = ApiClient.apiService.getScoreByUserName("John")//ApiClient.apiService.getHighScores(10)
-    val call = ApiClient.apiService.getAllHighScores()
     val highScores = remember { mutableStateListOf<HighScore>() }
 
-
     if (scoresType == stringResource(R.string.global_scores)) {
-
-        try {
-            firestoreClient.getTopHighscores(10)
-        } finally {
-            highScores.clear()
-            highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
+        highScores.clear()
+        LaunchedEffect(firestoreClient) {
+            try {
+                highScores.clear()
+                firestoreClient.getTopHighscores(10) { scores ->
+                    highScores.addAll(scores)
+                }
+            } catch (e: Exception) {
+                highScores.clear()
+                highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
+            }
         }
-
     } else if (scoresType == stringResource(R.string.local_scores)) {
         highScores.clear()
         state.localScores.forEach { localScore ->
@@ -71,8 +71,8 @@ fun LeaderboardScreen(
                 time = localScore.time // Assuming time is a property of your local score
             )
             highScores.add(highScore)
-        }
 
+        }
     } else {
         highScores.clear()
         highScores.add(HighScore("Failed to retrieve scores", "0", "0", "0"))
@@ -87,7 +87,6 @@ fun LeaderboardScreen(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        BasicBackground(modifier.fillMaxSize())
         LeaderboardLayout(onExit, scoresType, modifier.fillMaxSize(), highScores)
     }
 }

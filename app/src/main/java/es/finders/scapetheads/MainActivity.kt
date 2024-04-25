@@ -20,6 +20,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,26 +37,40 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.google.android.gms.auth.api.identity.Identity
-import es.finders.scapetheads.auth.GoogleAuthClient
-import es.finders.scapetheads.auth.SignInViewModel
-import es.finders.scapetheads.firestore.FirestoreClient
 import es.finders.scapetheads.menu.Defeat.DefeatScreen
 import es.finders.scapetheads.menu.Victory.VictoryScreen
 import es.finders.scapetheads.menu.home.HomeScreen
 import es.finders.scapetheads.menu.leaderboard.LeaderboardScreen
+import es.finders.scapetheads.menu.level.Level
 import es.finders.scapetheads.menu.levelselector.LevelSelectorScreen
 import es.finders.scapetheads.menu.login.SignInScreen
 import es.finders.scapetheads.menu.nickname.NicknameScreen
 import es.finders.scapetheads.menu.settings.SettingsScreen
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
-import es.finders.scapetheads.services.UnityBridge
+import es.finders.scapetheads.services.auth.GoogleAuthClient
+import es.finders.scapetheads.services.auth.SignInViewModel
+import es.finders.scapetheads.services.firestore.FirestoreClient
+import es.finders.scapetheads.services.unity.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
+
+
+    private val Context.dataStore by preferencesDataStore(name = "settings")
+
+    private object PreferencesKeys {
+        val LANGUAGE_KEY = stringPreferencesKey("language")
+        val VOLUME_KEY = intPreferencesKey("volume")
+        val THEME_KEY = booleanPreferencesKey("theme")
+    }
+
 
     private val googleAuthUiClient by lazy {
         GoogleAuthClient(
@@ -66,7 +87,7 @@ class MainActivity : ComponentActivity() {
         Room.databaseBuilder(
             applicationContext,
             LocalScoreDatabase::class.java,
-            "localscores.db"
+            "localScores.db"
         ).build()
     }
 
@@ -80,21 +101,29 @@ class MainActivity : ComponentActivity() {
         }
     )
 
-    private lateinit var mService: UnityBridge
+    private lateinit var unityBridge: UnityBridge
     private var mBound: Boolean = false
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as UnityBridge.LocalBinder
-            mService = binder.getService()
+            unityBridge = binder.getService()
             mBound = true
-            mService.setMode(JSONObject().apply {
+            unityBridge.setMode(JSONObject().apply {
                 put("gamemode", "level")
             })
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
             mBound = false
+        }
+    }
+
+    suspend fun initiateDataStore() {
+        applicationContext.dataStore.edit { settings ->
+            settings[PreferencesKeys.LANGUAGE_KEY] = "English"
+            settings[PreferencesKeys.VOLUME_KEY] = 50
+            settings[PreferencesKeys.THEME_KEY] = false
         }
     }
 
@@ -112,11 +141,19 @@ class MainActivity : ComponentActivity() {
         mBound = false
     }
 
+    // TODO: Fix typography, font looks bad
     override fun onCreate(savedInstanceState: Bundle?) {
         var scoreMode: String = getString(R.string.local_scores)
+
         super.onCreate(savedInstanceState)
         val intent = Intent(this, UnityBridge::class.java)
         startService(intent)
+
+        //TODO: better way to do this? (runBlocking)
+        //maybe this is enough tho, since it is a light operation
+        runBlocking {
+            initiateDataStore()
+        }
         setContent {
             ScapeTheAddsTheme {
                 Surface(
@@ -124,13 +161,14 @@ class MainActivity : ComponentActivity() {
                 ) {
                     BasicBackground(Modifier.fillMaxSize())
                     val navController = rememberNavController()
+                    val ctx = LocalContext.current
                     NavHost(navController = navController, startDestination = "sign_in") {
                         composable("sign_in") {
                             val viewModel = viewModel<SignInViewModel>()
                             val state by viewModel.state.collectAsStateWithLifecycle()
-
                             LaunchedEffect(key1 = Unit) {
                                 if (googleAuthUiClient.getSignedInUser() != null) {
+                                    // TODO: Fix return to nickname when user tries to quit
                                     // TODO: Check if used has nickname locally
                                     // If he does go to Home
                                     // Else
@@ -161,7 +199,8 @@ class MainActivity : ComponentActivity() {
                                     ).show()
 
                                     // TODO: Check if used has nickname locally
-                                    // If he does go to Home
+                                    // If he does
+                                    // navController.navigate("home")
                                     // Else
                                     navController.navigate("nickname")
                                     viewModel.resetState()
@@ -170,6 +209,9 @@ class MainActivity : ComponentActivity() {
 
                             SignInScreen(
                                 state = state,
+                                onExit = {
+                                    finishAffinity()
+                                },
                                 onSignInClick = {
                                     lifecycleScope.launch {
                                         val signInIntentSender = googleAuthUiClient.signIn()
@@ -184,23 +226,20 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("nickname") {
-                            Log.d("LoginScreen", googleAuthUiClient.getSignedInUser().toString())
-                            firestoreClient.testUpload()
                             NicknameScreen(
-                                onSignOut = {
-                                    lifecycleScope.launch {
-                                        googleAuthUiClient.signOut()
-                                        Toast.makeText(
-                                            applicationContext,
-                                            getString(R.string.signed_out),
-                                            Toast.LENGTH_LONG
-                                        ).show()
-
-                                        navController.popBackStack()
-                                    }
-                                },
                                 onNext = {
-                                    navController.navigate("home")
+                                    lifecycleScope.launch {
+                                        if (firestoreClient.checkNicknameExists(it)) {
+                                            Toast.makeText(
+                                                applicationContext,
+                                                "Nickname already chosen",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        } else {
+                                            navController.navigate("home")
+                                            firestoreClient.addNickname(it)
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -208,18 +247,34 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             HomeScreen(
                                 onExit = {
-                                    navController.popBackStack()
+                                    lifecycleScope.launch {
+                                        googleAuthUiClient.signOut()
+                                        Toast.makeText(
+                                            applicationContext,
+                                            getString(R.string.signed_out),
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    finishAffinity()
                                 },
                                 onHighscore = {
-                                    navController.navigate("leaderboard")
-                                },
-                                onLeaderboard = {
                                     scoreMode = getString(R.string.local_scores)
                                     navController.navigate("leaderboard")
                                 },
-                                onSelectLevel = {
+                                onLeaderboard = {
                                     scoreMode = getString(R.string.global_scores)
+                                    navController.navigate("leaderboard")
+                                },
+                                onSelectLevel = {
                                     navController.navigate("level_selector")
+                                },
+                                onPlay = {
+                                    unityBridge.setInfinite()
+                                    ContextCompat.startActivity(
+                                        ctx,
+                                        Intent(ctx, Level::class.java),
+                                        null
+                                    )
                                 },
                                 onSettings = {
                                     navController.navigate("settings")
@@ -228,15 +283,26 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("level_selector") {
+                            // TODO: Add launch Victory or Defeat depending on unityBridge result
                             LevelSelectorScreen(
                                 onExit = {
                                     navController.popBackStack()
+                                },
+                                onLevelSelected = {
+                                    unityBridge.setLevel(it.id)
+                                    ContextCompat.startActivity(
+                                        ctx,
+                                        Intent(ctx, Level::class.java),
+                                        null
+                                    )
                                 }
                             )
                         }
 
                         composable("leaderboard") {
+                            // TODO: Check if state reloads correctly when new scores are added
                             val state by viewModel.state.collectAsState()
+                            Log.d("TEST", scoreMode)
                             LeaderboardScreen(
                                 onExit = {
                                     navController.popBackStack()
@@ -247,11 +313,73 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        //Flow variable to the settings datastore to read is values  and pass them to the settings screen
+
+                        val preferencesLanguageFlow: Flow<String> = dataStore.data.map { preferences ->
+                                preferences[PreferencesKeys.LANGUAGE_KEY]?: "English"
+                            }
+                        val preferencesVolumeFlow: Flow<Int> = dataStore.data.map { preferences ->
+                            preferences[PreferencesKeys.VOLUME_KEY]?: 50
+                        }
+                        val preferencesThemeFlow: Flow<Boolean> = dataStore.data.map { preferences ->
+                            preferences[PreferencesKeys.THEME_KEY]?: false
+                        }
                         composable("settings") {
                             SettingsScreen(
                                 onExit = {
                                     navController.popBackStack()
-                                }
+                                },
+                                onEnglish = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.LANGUAGE_KEY] = "English"
+                                        }
+                                    }
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "English",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                onSpanish = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.LANGUAGE_KEY] = "Spanish"
+                                        }
+                                    }
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Spanish",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                preferencesLanguageFlow = preferencesLanguageFlow,
+                                onVolume = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.VOLUME_KEY] = it
+                                        }
+                                    }
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Volume changed to $it%",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                preferencesVolumeFlow = preferencesVolumeFlow,
+                                onTheme = {
+                                    runBlocking {
+                                        dataStore.edit { settings ->
+                                            settings[PreferencesKeys.THEME_KEY] = it
+                                        }
+                                    }
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Theme changed to ${if (it) "Dark" else "Light"}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                preferencesThemeFlow = preferencesThemeFlow
                             )
                         }
 

@@ -1,4 +1,4 @@
-package es.finders.scapetheads.services
+package es.finders.scapetheads.services.unity
 
 import android.app.Service
 import android.content.Intent
@@ -27,6 +27,19 @@ class UnityBridge : Service() {
     fun getMode(): JSONObject {
         Log.d(TAG, "Retrieved mode")
         return mode
+    }
+
+    fun setInfinite() {
+        setMode(JSONObject().apply {
+            put("gamemode", "infinite")
+        })
+    }
+
+    fun setLevel(level: Int) {
+        setMode(JSONObject().apply {
+            put("gamemode", "level")
+            put("gamemode", level)
+        })
     }
 
     fun setMode(newMode: JSONObject) {
@@ -76,7 +89,6 @@ class UnityBridge : Service() {
                 Log.d(TAG, "Received data: $receivedData")
 
                 handleData(receivedData)
-
                 clientSocket.close()
             }
         } catch (e: IOException) {
@@ -100,10 +112,10 @@ class UnityBridge : Service() {
     @OptIn(DelicateCoroutinesApi::class)
     private fun handleData(data: String) {
         GlobalScope.launch {
-            println(data) // TODO: Remove
+            println(data) // TODO: Finish
             // If infinite mode score
             // TODO: Store in local room score
-            // TODO: Send to server data if highscore > current user highscore
+            // TODO: Send to firestore data if highscore > current user highscore
             // If level
             // TODO: Update in room level completion
         }

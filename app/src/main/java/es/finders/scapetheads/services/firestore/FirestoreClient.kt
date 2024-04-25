@@ -1,10 +1,11 @@
-package es.finders.scapetheads.firestore
+package es.finders.scapetheads.services.firestore
 
 import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import es.finders.scapetheads.services.APIService.HighScore
 import kotlinx.coroutines.tasks.await
 import java.time.Instant.now
 
@@ -37,18 +38,29 @@ class FirestoreClient {
             }
     }
 
-    fun getTopHighscores(n: Long) {
+    fun getTopHighscores(n: Long, callback: (List<HighScore>) -> Unit) {
         db.collection(collection)
             .orderBy("score", Query.Direction.DESCENDING)
             .limit(n)
             .get()
             .addOnSuccessListener { result ->
+                val highScores: MutableList<HighScore> = mutableListOf()
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
+                    val highScore = HighScore(
+                        document.data.get("nickname").toString(),
+                        document.data.get("date").toString(),
+                        document.data.get("score").toString(),
+                        document.data.get("time").toString()
+                    )
+                    highScores.add(highScore)
                 }
+                callback(highScores)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error getting documents.", e)
+                // Return an empty list in case of failure
+                callback(emptyList())
             }
     }
 
@@ -108,8 +120,8 @@ class FirestoreClient {
             }
     }
 
-    fun testUpload() {
-        addHighscore(HighScoreData("sample", 0, 0, now().epochSecond))
+    fun addNickname(nickname: String) {
+        addHighscore(HighScoreData(nickname, 0, 0, now().epochSecond))
     }
 
 
