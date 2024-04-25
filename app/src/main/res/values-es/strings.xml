@@ -26,4 +26,5 @@
     <string name="signed_out">Sesión cerrada</string>
     <string name="exit">Salir</string>
     <string name="date">Date</string>
+    <string name="or">o</string>
 </resources>

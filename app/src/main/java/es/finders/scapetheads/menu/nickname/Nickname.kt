@@ -30,16 +30,14 @@ import androidx.compose.ui.unit.em
 import es.finders.scapetheads.R
 import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
-import es.finders.scapetheads.ui.utils.ButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 
 @Composable
 fun NicknameScreen(
-    onSignOut: () -> Unit,
     onNext: (nickname: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var text by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier,
@@ -55,8 +53,8 @@ fun NicknameScreen(
         ) {
 
             OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
+                value = nickname,
+                onValueChange = { nickname = it },
                 modifier = Modifier,
                 placeholder = { Text(text = stringResource(R.string.pick_nickname)) },
                 colors = TextFieldDefaults.colors(
@@ -68,7 +66,7 @@ fun NicknameScreen(
 
             Spacer(Modifier.size(16.dp))
             Button(
-                onClick = { onNext(text) },
+                onClick = { onNext(nickname) },
                 modifier = modifier
                     .padding(top = 5.dp, bottom = 20.dp)
                     .fillMaxWidth(0.70f),
@@ -87,14 +85,6 @@ fun NicknameScreen(
                     fontSize = 5.em,
                 )
             }
-            // TODO: Change exit type / log out
-            ButtonItem(
-                stringResource(R.string.exit),
-                onSignOut,
-                Modifier
-                    .padding(top = 5.dp, bottom = 20.dp)
-                    .fillMaxWidth(0.70f)
-            )
         }
     }
 }
@@ -103,6 +93,6 @@ fun NicknameScreen(
 @Composable
 private fun NicknameScreenPreview() {
     ScapeTheAddsTheme {
-        NicknameScreen(onSignOut = {}, onNext = {})
+        NicknameScreen(onNext = {})
     }
 }

@@ -29,6 +29,19 @@ class UnityBridge : Service() {
         return mode
     }
 
+    fun setInfinite() {
+        setMode(JSONObject().apply {
+            put("gamemode", "infinite")
+        })
+    }
+
+    fun setLevel(level: Int) {
+        setMode(JSONObject().apply {
+            put("gamemode", "level")
+            put("gamemode", level)
+        })
+    }
+
     fun setMode(newMode: JSONObject) {
         Log.d(TAG, "Set mode")
         this.mode = newMode
