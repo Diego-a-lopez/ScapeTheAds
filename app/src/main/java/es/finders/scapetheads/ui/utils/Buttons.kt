@@ -3,6 +3,7 @@ package es.finders.scapetheads.ui.utils
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -15,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -69,4 +72,58 @@ fun SettingsButton(
             onClick()
         }
     )
+}
+
+@Composable
+fun IconButtonItem(text: String, icon: Painter, onClick: () -> Unit, modifier: Modifier) {
+    Button(
+        onClick = { onClick() },
+        modifier = modifier,
+        shape = RoundedCornerShape(35),
+        contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
+        border = BorderStroke(1.dp, Color.Black),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = RedPrimary
+        )
+    ) {
+        Icon(
+            painter = icon,
+            contentDescription = text,
+            tint = Color.White,
+            modifier = Modifier.padding(end = 6.dp)
+        )
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            fontSize = 5.em,
+        )
+    }
+}
+
+@Composable
+fun IconButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier) {
+    Button(
+        onClick = { onClick() },
+        modifier = modifier,
+        shape = RoundedCornerShape(35),
+        contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
+        border = BorderStroke(1.dp, Color.Black),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = RedPrimary
+        )
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = text,
+            tint = Color.White,
+            modifier = Modifier.padding(end = 6.dp)
+        )
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            fontSize = 5.em,
+        )
+    }
 }
