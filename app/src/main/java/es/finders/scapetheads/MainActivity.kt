@@ -20,13 +20,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,6 +48,8 @@ import es.finders.scapetheads.menu.nickname.NicknameScreen
 import es.finders.scapetheads.menu.settings.SettingsScreen
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
+import es.finders.scapetheads.services.AndroidRoom.user.UserNickname
+import es.finders.scapetheads.services.AndroidRoom.user.UserNicknameDatabase
 import es.finders.scapetheads.services.auth.GoogleAuthClient
 import es.finders.scapetheads.services.auth.SignInViewModel
 import es.finders.scapetheads.services.firestore.FirestoreClient
@@ -89,6 +91,15 @@ class MainActivity : ComponentActivity() {
             LocalScoreDatabase::class.java,
             "localScores.db"
         ).build()
+    }
+
+    private var currentUserNickname: String = ""
+    private val userDB by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            UserNicknameDatabase::class.java,
+            "userNickname.db"
+        ).allowMainThreadQueries().build()
     }
 
     private val viewModel by viewModels<LocalScoreViewModel>(
@@ -168,11 +179,14 @@ class MainActivity : ComponentActivity() {
                             val state by viewModel.state.collectAsStateWithLifecycle()
                             LaunchedEffect(key1 = Unit) {
                                 if (googleAuthUiClient.getSignedInUser() != null) {
-                                    // TODO: Fix return to nickname when user tries to quit
-                                    // TODO: Check if used has nickname locally
-                                    // If he does go to Home
-                                    // Else
-                                    navController.navigate("nickname")
+                                    val userId = googleAuthUiClient.getSignedInUser()!!.userId
+                                    if (userDB.dao.userExists(userId)) {
+                                        currentUserNickname =
+                                            userDB.dao.getByUserId(userId).nickname
+                                        navController.navigate("home")
+                                    } else {
+                                        navController.navigate("nickname")
+                                    }
                                 }
                             }
 
@@ -198,12 +212,14 @@ class MainActivity : ComponentActivity() {
                                         Toast.LENGTH_LONG
                                     ).show()
 
-                                    // TODO: Check if used has nickname locally
-                                    // If he does
-                                    // navController.navigate("home")
-                                    // Else
-                                    navController.navigate("nickname")
-                                    viewModel.resetState()
+                                    val userId = googleAuthUiClient.getSignedInUser()!!.userId
+                                    if (userDB.dao.userExists(userId)) {
+                                        currentUserNickname =
+                                            userDB.dao.getByUserId(userId).nickname
+                                        navController.navigate("home")
+                                    } else {
+                                        navController.navigate("nickname")
+                                    }
                                 }
                             }
 
@@ -237,6 +253,13 @@ class MainActivity : ComponentActivity() {
                                             ).show()
                                         } else {
                                             navController.navigate("home")
+                                            userDB.dao.upsert(
+                                                UserNickname(
+                                                    userId = googleAuthUiClient.getSignedInUser()!!.userId,
+                                                    nickname = it
+                                                )
+                                            )
+                                            currentUserNickname = it
                                             firestoreClient.addNickname(it)
                                         }
                                     }
@@ -314,16 +337,18 @@ class MainActivity : ComponentActivity() {
                         }
 
                         //Flow variable to the settings datastore to read is values  and pass them to the settings screen
-
-                        val preferencesLanguageFlow: Flow<String> = dataStore.data.map { preferences ->
-                                preferences[PreferencesKeys.LANGUAGE_KEY]?: "English"
+                        // TODO: WTF
+                        val preferencesLanguageFlow: Flow<String> =
+                            dataStore.data.map { preferences ->
+                                preferences[PreferencesKeys.LANGUAGE_KEY] ?: "English"
                             }
                         val preferencesVolumeFlow: Flow<Int> = dataStore.data.map { preferences ->
-                            preferences[PreferencesKeys.VOLUME_KEY]?: 50
+                            preferences[PreferencesKeys.VOLUME_KEY] ?: 50
                         }
-                        val preferencesThemeFlow: Flow<Boolean> = dataStore.data.map { preferences ->
-                            preferences[PreferencesKeys.THEME_KEY]?: false
-                        }
+                        val preferencesThemeFlow: Flow<Boolean> =
+                            dataStore.data.map { preferences ->
+                                preferences[PreferencesKeys.THEME_KEY] ?: false
+                            }
                         composable("settings") {
                             SettingsScreen(
                                 onExit = {
