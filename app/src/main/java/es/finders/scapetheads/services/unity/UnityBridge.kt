@@ -46,8 +46,7 @@ class UnityBridge : Service() {
         Log.d(TAG, "Set mode")
         this.mode = newMode
     }
-
-
+    
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Service onCreate")
@@ -56,7 +55,6 @@ class UnityBridge : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "Service onStartCommand")
 
-        // Start the server in a separate thread
         Thread { startServer() }.start()
 
         return START_STICKY
