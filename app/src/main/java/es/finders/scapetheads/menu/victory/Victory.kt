@@ -2,7 +2,6 @@ package es.finders.scapetheads.menu.Victory
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import es.finders.scapetheads.R
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.ButtonItem
+import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @Composable
@@ -39,8 +39,7 @@ private fun VictoryScreenPreview() {
 
 @Composable
 fun VictoryLayout(onExit: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
+    CardBackgroundColumn(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

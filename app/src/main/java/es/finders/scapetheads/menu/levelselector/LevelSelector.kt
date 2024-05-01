@@ -2,10 +2,8 @@ package es.finders.scapetheads.menu.levelselector
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,6 +17,7 @@ import es.finders.scapetheads.R
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.ButtonItem
+import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -42,10 +41,8 @@ fun LevelSelectorScreen(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        CardBackgroundColumn(
+            horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             BackButton(onExit)
