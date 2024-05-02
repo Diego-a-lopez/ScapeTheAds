@@ -152,7 +152,6 @@ class MainActivity : ComponentActivity() {
         mBound = false
     }
 
-    // TODO: Fix typography, font looks bad
     override fun onCreate(savedInstanceState: Bundle?) {
         var scoreMode: String = getString(R.string.local_scores)
 

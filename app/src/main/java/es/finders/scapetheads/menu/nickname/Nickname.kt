@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +29,7 @@ import es.finders.scapetheads.R
 import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.Logo
+import es.finders.scapetheads.ui.utils.TextInput
 
 @Composable
 fun NicknameScreen(
@@ -52,16 +51,10 @@ fun NicknameScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            OutlinedTextField(
-                value = nickname,
-                onValueChange = { nickname = it },
-                modifier = Modifier,
-                placeholder = { Text(text = stringResource(R.string.pick_nickname)) },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                ),
-                shape = RoundedCornerShape(35),
+            TextInput(
+                nickname,
+                { nickname = it },
+                { Text(text = stringResource(R.string.pick_nickname)) }
             )
 
             Spacer(Modifier.size(16.dp))

@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -29,69 +29,89 @@ import es.finders.scapetheads.R
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.ButtonItem
+import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.Logo
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier,
-                   onExit: () -> Unit,
-                   onSpanish: () -> Unit,
-                   onEnglish: () -> Unit,
-                   preferencesLanguageFlow: Flow<String>,
-                   onVolume: (newVolumeValue: Int) -> Unit,
-                   preferencesVolumeFlow: Flow<Int>,
-                   onTheme: (isDark: Boolean) -> Unit,
-                   preferencesThemeFlow: Flow<Boolean>
-                   ) {
+fun SettingsScreen(
+    modifier: Modifier = Modifier,
+    onExit: () -> Unit,
+    onSpanish: () -> Unit,
+    onEnglish: () -> Unit,
+    preferencesLanguageFlow: Flow<String>,
+    onVolume: (newVolumeValue: Int) -> Unit,
+    preferencesVolumeFlow: Flow<Int>,
+    onTheme: (isDark: Boolean) -> Unit,
+    preferencesThemeFlow: Flow<Boolean>
+) {
     // TODO: Finish settings screen
     Box(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        SettingsScreenLayout(modifier.fillMaxSize(), onExit,onSpanish, onEnglish, preferencesLanguageFlow, onVolume, preferencesVolumeFlow, onTheme, preferencesThemeFlow)
-    }
-}
-
-@Composable
-fun SettingsScreenLayout(modifier: Modifier = Modifier,
-                         onExit: () -> Unit,
-                         onSpanish: () -> Unit,
-                         onEnglish: () -> Unit,
-                         preferencesLanguageFlow: Flow<String>,
-                         onVolume: (newVolumeValue: Int) -> Unit,
-                         preferencesVolumeFlow: Flow<Int>,
-                         onTheme: (isDark: Boolean) -> Unit,
-                         preferencesThemeFlow: Flow<Boolean> ){
-    val ctx = LocalContext.current
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceAround,
-
-        ) {
-        BackButton(onExit)
-        OutlineTextSection(
-            stringResource(R.string.settings),
-            textSize = MaterialTheme.typography.displayMedium.fontSize
+        SettingsScreenLayout(
+            modifier.fillMaxSize(),
+            onSpanish,
+            onEnglish,
+            preferencesLanguageFlow,
+            onVolume,
+            preferencesVolumeFlow,
+            onTheme,
+            preferencesThemeFlow
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Logo(modifier = Modifier.align(Alignment.CenterHorizontally))
-        BottomButtonsSection(ctx,onSpanish, onEnglish, preferencesLanguageFlow, onVolume, preferencesVolumeFlow, onTheme, preferencesThemeFlow)
+
+        BackButton(
+            onExit, Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 20.dp)
+        )
     }
 }
 
 @Composable
-fun BottomButtonsSection(ctx: Context,
-                         onSpanish: () -> Unit,
-                         onEnglish: () -> Unit,
-                         preferencesLanguageFlow: Flow<String>,
-                         onVolume: (newVolumeValue: Int) -> Unit,
-                         preferencesVolumeFlow: Flow<Int>,
-                         onTheme: (isDark: Boolean) -> Unit,
-                         preferencesThemeFlow: Flow<Boolean> ){
+fun SettingsScreenLayout(
+    modifier: Modifier = Modifier,
+    onSpanish: () -> Unit,
+    onEnglish: () -> Unit,
+    preferencesLanguageFlow: Flow<String>,
+    onVolume: (newVolumeValue: Int) -> Unit,
+    preferencesVolumeFlow: Flow<Int>,
+    onTheme: (isDark: Boolean) -> Unit,
+    preferencesThemeFlow: Flow<Boolean>
+) {
+    val ctx = LocalContext.current
+
+    CardBackgroundColumn(
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.SpaceAround,
+    ) {
+        BottomButtonsSection(
+            ctx,
+            onSpanish,
+            onEnglish,
+            preferencesLanguageFlow,
+            onVolume,
+            preferencesVolumeFlow,
+            onTheme,
+            preferencesThemeFlow
+        )
+    }
+}
+
+@Composable
+fun BottomButtonsSection(
+    ctx: Context,
+    onSpanish: () -> Unit,
+    onEnglish: () -> Unit,
+    preferencesLanguageFlow: Flow<String>,
+    onVolume: (newVolumeValue: Int) -> Unit,
+    preferencesVolumeFlow: Flow<Int>,
+    onTheme: (isDark: Boolean) -> Unit,
+    preferencesThemeFlow: Flow<Boolean>
+) {
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
         .fillMaxWidth()
@@ -99,16 +119,30 @@ fun BottomButtonsSection(ctx: Context,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
     ) {
+        OutlineTextSection(
+            stringResource(R.string.settings),
+            textSize = MaterialTheme.typography.displayMedium.fontSize
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Logo(modifier = Modifier.align(Alignment.CenterHorizontally))
         LabeledSetting(stringResource(R.string.language))
-        LanguageSettings(ctx, onSpanish, onEnglish,preferencesLanguageFlow)
+        LanguageSettings(ctx, onSpanish, onEnglish, preferencesLanguageFlow)
         Spacer(modifier = Modifier.height(16.dp))
         LabeledSetting(stringResource(R.string.volume))
         VolumeSettings(ctx, onVolume, preferencesVolumeFlow)
         Spacer(modifier = Modifier.height(16.dp))
-        LabeledSetting(stringResource(R.string.theme))
-        Spacer(modifier = Modifier.width(16.dp))
-        ThemeSettings(ctx, onTheme, preferencesThemeFlow)
+        Row(
+            modifier = Modifier.padding(end = 32.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            LabeledSetting(stringResource(R.string.theme))
+            ThemeSettings(ctx, onTheme, preferencesThemeFlow)
+        }
+        //Spacer(modifier = Modifier.width(16.dp))
+        //ThemeSettings(ctx, onTheme, preferencesThemeFlow)
     }
 }
 
@@ -127,8 +161,8 @@ fun LanguageSettings(
     onSpanish: () -> Unit,
     onEnglish: () -> Unit,
     preferencesLanguageFlow: Flow<String>
-){
-    //TODO: actually change language
+) {
+    // TODO: actually change language
     val languageState = preferencesLanguageFlow.collectAsState(initial = "English")
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
@@ -140,7 +174,7 @@ fun LanguageSettings(
             .padding(vertical = 8.dp),
     ) {
         ButtonItem("English", {
-           onEnglish()
+            onEnglish()
         }, buttonModifier)
         ButtonItem("Spanish", {
             onSpanish()
@@ -178,14 +212,16 @@ fun VolumeSettings(
     ctx: Context,
     onVolume: (newVolumeValue: Int) -> Unit,
     preferencesVolumeFlow: Flow<Int>
-){
+) {
     val volumeState by preferencesVolumeFlow.collectAsState(initial = 50)
 
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Slider(
-            value = volumeState.toFloat()/100,
+            value = volumeState.toFloat() / 100,
             onValueChange = {
-                onVolume((it*100).toInt())
+                onVolume((it * 100).toInt())
             }
         )
         Text(text = volumeState.toFloat().toString())
@@ -198,7 +234,7 @@ fun ThemeSettings(
     ctx: Context,
     onTheme: (isDark: Boolean) -> Unit,
     preferencesThemeFlow: Flow<Boolean>
-){
+) {
     val themeState = preferencesThemeFlow.collectAsState(initial = false)
 
     Switch(
@@ -215,11 +251,11 @@ fun SettingsPreview() {
             onExit = { println("Exit") },
             onEnglish = { println("English") },
             onSpanish = { println("English") },
-            preferencesLanguageFlow = flow {"English"},
+            preferencesLanguageFlow = flow { "English" },
             onVolume = { println("Volume") },
-            preferencesVolumeFlow = flow {50},
+            preferencesVolumeFlow = flow { 50 },
             onTheme = { println("Theme") },
-            preferencesThemeFlow = flow {false}
-            )
+            preferencesThemeFlow = flow { false }
+        )
     }
 }

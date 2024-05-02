@@ -1,8 +1,8 @@
 package es.finders.scapetheads.menu.leaderboard
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +23,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +31,12 @@ import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
 import es.finders.scapetheads.services.APIService.HighScore
 import es.finders.scapetheads.services.firestore.FirestoreClient
+import es.finders.scapetheads.ui.theme.BlackTertiary
+import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
+import es.finders.scapetheads.ui.theme.WhiteSecondary
 import es.finders.scapetheads.ui.utils.BackButton
+import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @Composable
@@ -48,10 +51,8 @@ fun LeaderboardScreen(
     val highScores = remember { mutableStateListOf<HighScore>() }
 
     if (scoresType == stringResource(R.string.global_scores)) {
-        highScores.clear()
         LaunchedEffect(firestoreClient) {
             try {
-                highScores.clear()
                 firestoreClient.getTopHighscores(10) { scores ->
                     highScores.addAll(scores)
                 }
@@ -87,49 +88,41 @@ fun LeaderboardScreen(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        LeaderboardLayout(onExit, scoresType, modifier.fillMaxSize(), highScores)
+        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), highScores)
+        BackButton(
+            onExit, Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 20.dp)
+        )
     }
 }
 
 @Composable
 fun LeaderboardLayout(
-    onExit: () -> Unit,
+    ctx: Context,
     scoresType: String,
     modifier: Modifier = Modifier,
     highScores: List<HighScore>,
 ) {
-    // Variables for styling
-    val containerColor = MaterialTheme.colorScheme.surface
-    val containerOutlineColor = MaterialTheme.colorScheme.onSurface
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    CardBackgroundColumn(
+        horizontalAlignment = Alignment.Start
     ) {
-        // Upper Left Arrow to go back to home screen
-        BackButton(onExit)
-
         // Container for user info rows
         // Load local or global scores based on scoresType
         if (scoresType == stringResource(R.string.local_scores)) {
             OutlineTextSection(stringResource(R.string.local_scores))
             // Load local scores
-            LocalScoresContainer(containerColor, containerOutlineColor, highScores)
+            LocalScoresContainer(highScores)
         } else if (scoresType == stringResource(R.string.global_scores)) {
             OutlineTextSection(stringResource(R.string.global_scores))
             // Load global scores
-            GlobalScoresContainer(containerColor, containerOutlineColor, highScores)
+            GlobalScoresContainer(highScores)
         }
-
     }
 }
 
 @Composable
 fun LocalScoresContainer(
-    containerColor: Color,
-    containerOutlineColor: Color,
     localScores: List<HighScore>
 ) {
     Column(
@@ -141,8 +134,7 @@ fun LocalScoresContainer(
             stringResource(R.string.user_name),
             stringResource(R.string.date),
             stringResource(R.string.score),
-            stringResource(R.string.time),
-            containerOutlineColor
+            stringResource(R.string.time)
         )
         Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
         Column(
@@ -150,7 +142,7 @@ fun LocalScoresContainer(
                 .verticalScroll(rememberScrollState())
         ) {
             localScores.forEach { score ->
-                UserInfoRow(score.user, score.date, score.score, score.time, containerOutlineColor)
+                UserInfoRow(score.user, score.date, score.score, score.time)
                 Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
             }
         }
@@ -160,8 +152,6 @@ fun LocalScoresContainer(
 
 @Composable
 fun GlobalScoresContainer(
-    containerColor: Color,
-    containerOutlineColor: Color,
     highScores: List<HighScore>
 ) {
     Column(
@@ -176,7 +166,6 @@ fun GlobalScoresContainer(
             stringResource(R.string.date),
             stringResource(R.string.score),
             stringResource(R.string.time),
-            containerOutlineColor
         )
         Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
         Column(
@@ -186,7 +175,7 @@ fun GlobalScoresContainer(
 
             highScores.forEach { score ->
                 //UserInfoRow("Global John Doe", "100", "100", containerOutlineColor)
-                UserInfoRow(score.user, score.date, score.score, score.time, containerOutlineColor)
+                UserInfoRow(score.user, score.date, score.score, score.time)
                 Spacer(modifier = Modifier.height(16.dp)) // Adding space between user rows
             }
         }
@@ -201,21 +190,23 @@ fun UserInfoRow(
     date: String,
     score: String,
     time: String,
-    textColor: Color
 ) {
     // Variables for styling
     val paddingValue = 16.dp
     val scorePaddingValue = 8.dp
-
+    val textColor = WhiteSecondary//colorScheme.onPrimary
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(6.dp),
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(3.dp, Color.Black),
+        color = RedPrimary,//colorScheme.primary,
+        border = BorderStroke(3.dp, BlackTertiary),//colorScheme.onPrimary),
     ) {
         Row(
             modifier = Modifier.padding(paddingValue),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+
+            ) {
             Text(text = user, color = textColor)
             Spacer(modifier = Modifier.weight(1f))
             Text(text = date, color = textColor)
