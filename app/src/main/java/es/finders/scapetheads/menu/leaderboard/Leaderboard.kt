@@ -92,7 +92,7 @@ fun LeaderboardScreen(
         BackButton(
             onExit, Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 20.dp, end = 20.dp)
+                .padding(top = 20.dp)
         )
     }
 }
