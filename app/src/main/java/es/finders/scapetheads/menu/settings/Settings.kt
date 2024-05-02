@@ -131,7 +131,7 @@ fun BottomButtonsSection(
         VolumeSettings(ctx, onVolume, preferencesVolumeFlow)
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            modifier = Modifier.padding(end=32.dp),
+            modifier = Modifier.padding(end = 32.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
@@ -159,7 +159,7 @@ fun LanguageSettings(
     onEnglish: () -> Unit,
     preferencesLanguageFlow: Flow<String>
 ) {
-    //TODO: actually change language
+    // TODO: actually change language
     val languageState = preferencesLanguageFlow.collectAsState(initial = "English")
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
