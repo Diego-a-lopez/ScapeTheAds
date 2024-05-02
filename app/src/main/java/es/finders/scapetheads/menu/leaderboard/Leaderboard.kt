@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -98,7 +98,7 @@ fun LeaderboardLayout(
     modifier: Modifier = Modifier,
     highScores: List<HighScore>,
 ) {
-    CardBackgroundColumn (
+    CardBackgroundColumn(
         horizontalAlignment = Alignment.Start
     ) {
         // Upper Left Arrow to go back to home screen
@@ -186,14 +186,15 @@ fun UserInfoRow(
     date: String,
     score: String,
     time: String,
-    colorScheme: ColorScheme = ScapeTheAddsTheme {}
 ) {
     // Variables for styling
     val paddingValue = 16.dp
     val scorePaddingValue = 8.dp
     val textColor = colorScheme.onPrimary
     Surface(
-        modifier = Modifier.fillMaxWidth().padding(6.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(6.dp),
         shape = MaterialTheme.shapes.medium,
         color = colorScheme.primary,
         border = BorderStroke(3.dp, colorScheme.onPrimary),

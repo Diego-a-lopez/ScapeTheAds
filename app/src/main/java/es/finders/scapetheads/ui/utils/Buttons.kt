@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -18,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import es.finders.scapetheads.ui.theme.Kalam
 import es.finders.scapetheads.ui.theme.RedPrimary
 
 @Composable
@@ -40,6 +41,8 @@ fun ButtonItem(text: String, onClick: () -> Unit, modifier: Modifier) {
             textAlign = TextAlign.Center,
             color = Color.White,
             fontSize = 5.em,
+            fontFamily = Kalam,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -52,22 +55,6 @@ fun BackButton(
     Icon(
         imageVector = Icons.Default.ArrowBack,
         contentDescription = "Back",
-        modifier = modifier.clickable {
-            onClick()
-        }
-    )
-}
-
-
-@Composable
-fun SettingsButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-        .size(48.dp)
-) {
-    Icon(
-        imageVector = Icons.Default.Settings, // Use the settings icon
-        contentDescription = "Settings",
         modifier = modifier.clickable {
             onClick()
         }
@@ -97,6 +84,8 @@ fun IconButtonItem(text: String, icon: Painter, onClick: () -> Unit, modifier: M
             textAlign = TextAlign.Center,
             color = Color.White,
             fontSize = 5.em,
+            fontFamily = Kalam,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -124,6 +113,8 @@ fun IconButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifie
             textAlign = TextAlign.Center,
             color = Color.White,
             fontSize = 5.em,
+            fontFamily = Kalam,
+            fontWeight = FontWeight.Bold
         )
     }
 }
