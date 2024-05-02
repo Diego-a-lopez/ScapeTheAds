@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import es.finders.scapetheads.R
 import es.finders.scapetheads.services.auth.SignInState
-import es.finders.scapetheads.ui.utils.ButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 
 @Composable
@@ -78,7 +76,6 @@ fun SignInScreen(
             { Text(text = stringResource(R.string.email)) },
             visualTransformation = PasswordVisualTransformation()
         )
-        */
         Spacer(Modifier.size(16.dp))
         ButtonItem(
             stringResource(R.string.next),
@@ -88,6 +85,7 @@ fun SignInScreen(
                 .fillMaxWidth(0.70f)
         )
         Spacer(Modifier.size(16.dp))
+        */
         // Text(text = stringResource(R.string.or))
         Button(
             onClick = onSignInClick,
