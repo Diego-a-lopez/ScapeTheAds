@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -43,9 +46,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import es.finders.scapetheads.ui.theme.BeigeBackground
 import es.finders.scapetheads.ui.theme.Kalam
 import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
+import es.finders.scapetheads.ui.theme.WhiteSecondary
 
 @Composable
 fun ButtonItem(text: String, onClick: () -> Unit, modifier: Modifier) {
@@ -76,14 +81,16 @@ fun BackButton(
 ) {
     Box(
         modifier = modifier
-            .size(48.dp)
+            .size(50.dp)
             .clip(CustomExitButton(cornerRadius = 5.dp))
-            .background(Color.Black)
+            .background(BeigeBackground)
             .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(Alignment.End)
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .height(43.dp)
+                .width(46.dp)
                 .clip(CustomExitButton(cornerRadius = 5.dp))
                 .background(RedPrimary)
         ) {
@@ -97,9 +104,9 @@ fun BackButton(
                 Icon(
                     imageVector = Icons.Default.Clear,
                     contentDescription = "Back",
-                    tint = Color.White,
+                    tint = BeigeBackground,
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(45.dp)
                         .clickable {
                             onClick()
                         }
@@ -171,7 +178,7 @@ fun IconButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifie
 @Composable
 fun ExitShape() {
     ScapeTheAddsTheme {
-        BackButton(onClick = {})
+        BackButton({})
     }
 }
 
@@ -199,23 +206,23 @@ class CustomExitButton(
             )
 
             moveTo(
-                x = size.width / 2,
-                y = 0f
-            )
-
-            lineTo(
-                x = 0f,
-                y = 0f
-            )
-
-            lineTo(
-                x = 0f,
+                x = size.width / 3,
                 y = size.height
             )
 
             lineTo(
-                x = size.width / 2,
+                x = size.width,
                 y = size.height
+            )
+
+            lineTo(
+                x = size.width,
+                y = 0f
+            )
+
+            lineTo(
+                x = size.width / 3,
+                y = 0f
             )
 
             close()

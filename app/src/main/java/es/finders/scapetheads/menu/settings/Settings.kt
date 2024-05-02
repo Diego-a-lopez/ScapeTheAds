@@ -54,7 +54,6 @@ fun SettingsScreen(
     ) {
         SettingsScreenLayout(
             modifier.fillMaxSize(),
-            onExit,
             onSpanish,
             onEnglish,
             preferencesLanguageFlow,
@@ -63,13 +62,18 @@ fun SettingsScreen(
             onTheme,
             preferencesThemeFlow
         )
+
+        BackButton(
+            onExit, Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 20.dp)
+        )
     }
 }
 
 @Composable
 fun SettingsScreenLayout(
     modifier: Modifier = Modifier,
-    onExit: () -> Unit,
     onSpanish: () -> Unit,
     onEnglish: () -> Unit,
     preferencesLanguageFlow: Flow<String>,
@@ -84,7 +88,6 @@ fun SettingsScreenLayout(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.SpaceAround,
     ) {
-        BackButton(onExit)
         BottomButtonsSection(
             ctx,
             onSpanish,

@@ -86,14 +86,18 @@ fun LeaderboardScreen(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        LeaderboardLayout(ctx, onExit, scoresType, modifier.fillMaxSize(), highScores)
+        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), highScores)
+        BackButton(
+            onExit, Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 20.dp)
+        )
     }
 }
 
 @Composable
 fun LeaderboardLayout(
     ctx: Context,
-    onExit: () -> Unit,
     scoresType: String,
     modifier: Modifier = Modifier,
     highScores: List<HighScore>,
@@ -101,8 +105,6 @@ fun LeaderboardLayout(
     CardBackgroundColumn(
         horizontalAlignment = Alignment.Start
     ) {
-        // Upper Left Arrow to go back to home screen
-        BackButton(onExit)
         // Container for user info rows
         // Load local or global scores based on scoresType
         if (scoresType == stringResource(R.string.local_scores)) {

@@ -45,7 +45,6 @@ fun LevelSelectorScreen(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            BackButton(onExit)
             OutlineTextSection(stringResource(R.string.level_selection))
             FlowRow(modifier = Modifier.padding(8.dp)) {
                 levels.forEach { level ->
@@ -57,6 +56,11 @@ fun LevelSelectorScreen(
                 }
             }
         }
+        BackButton(
+            onExit, Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 20.dp)
+        )
     }
 }
 
