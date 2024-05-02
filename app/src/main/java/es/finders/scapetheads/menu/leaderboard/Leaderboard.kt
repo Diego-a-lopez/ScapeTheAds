@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +31,10 @@ import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
 import es.finders.scapetheads.services.APIService.HighScore
 import es.finders.scapetheads.services.firestore.FirestoreClient
+import es.finders.scapetheads.ui.theme.BlackTertiary
+import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
+import es.finders.scapetheads.ui.theme.WhiteSecondary
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
@@ -192,14 +194,14 @@ fun UserInfoRow(
     // Variables for styling
     val paddingValue = 16.dp
     val scorePaddingValue = 8.dp
-    val textColor = colorScheme.onPrimary
+    val textColor = WhiteSecondary//colorScheme.onPrimary
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp),
         shape = MaterialTheme.shapes.medium,
-        color = colorScheme.primary,
-        border = BorderStroke(3.dp, colorScheme.onPrimary),
+        color = RedPrimary,//colorScheme.primary,
+        border = BorderStroke(3.dp, BlackTertiary),//colorScheme.onPrimary),
     ) {
         Row(
             modifier = Modifier.padding(paddingValue),
