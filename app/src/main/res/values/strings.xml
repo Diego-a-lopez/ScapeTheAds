@@ -30,4 +30,6 @@
     <string name="or">or</string>
     <string name="english">English</string>
     <string name="spanish">Spanish</string>
+    <string name="game_over">Game Over</string>
+    <string name="levels_passed">Levels Passed</string>
 </resources>

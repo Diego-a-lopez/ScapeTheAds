@@ -29,4 +29,6 @@
     <string name="or">o</string>
     <string name="english">Inglés</string>
     <string name="spanish">Español</string>
+    <string name="game_over">Juego Terminado</string>
+    <string name="levels_passed">"Niveles superados</string>
 </resources>

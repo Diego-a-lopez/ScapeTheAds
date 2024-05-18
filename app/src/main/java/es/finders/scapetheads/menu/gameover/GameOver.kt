@@ -44,10 +44,12 @@ fun GameOverScreen(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlineTextSection("Game Over")
+            OutlineTextSection(stringResource(R.string.game_over))
             Spacer(Modifier.size(300.dp))
             Surface(
-                modifier = Modifier.padding(16.dp).background(colorScheme.background),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(colorScheme.background),
                 shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(3.dp, colorScheme.tertiary),
             ) {
@@ -56,7 +58,7 @@ fun GameOverScreen(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = "Niveles superados:", color = colorScheme.onBackground)
+                        Text(text = stringResource(R.string.levels_passed)+":", color = colorScheme.onBackground)
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = "$stage", color = colorScheme.onBackground)
                     }
@@ -64,17 +66,17 @@ fun GameOverScreen(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = "Tiempo:", color = colorScheme.onBackground)
+                        Text(text =  stringResource(R.string.time)+":", color = colorScheme.onBackground)
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "$clearTime s", color = colorScheme.onBackground)
+                        Text(text = "$clearTime " +  stringResource(R.string.seconds), color = colorScheme.onBackground)
                     }
                     Row(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = "Puntuación:", color = colorScheme.onBackground)
+                        Text(text = stringResource(R.string.score)+":", color = colorScheme.onBackground)
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "$score pto", color = colorScheme.onBackground)
+                        Text(text = "$score " + stringResource(R.string.points), color = colorScheme.onBackground)
                     }
                 }
 
