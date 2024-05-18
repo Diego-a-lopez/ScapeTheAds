@@ -1,6 +1,7 @@
 package es.finders.scapetheads.ui.utils
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -10,13 +11,27 @@ import es.finders.scapetheads.R
 
 @Composable
 fun Title(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.title),
-        contentDescription = null,
-        contentScale = ContentScale.Inside,
-        modifier = modifier.graphicsLayer(
-            scaleX = 2f,
-            scaleY = 2f
+    val darkTheme: Boolean = isSystemInDarkTheme()
+    if (darkTheme) {
+        Image(
+            painter = painterResource(id = R.drawable.title),
+            contentDescription = null,
+            contentScale = ContentScale.Inside,
+            modifier = modifier.graphicsLayer(
+                scaleX = 2f,
+                scaleY = 2f
+            )
         )
-    )
+    }
+    else {
+        Image(
+            painter = painterResource(id = R.drawable.title),
+            contentDescription = null,
+            contentScale = ContentScale.Inside,
+            modifier = modifier.graphicsLayer(
+                scaleX = 2f,
+                scaleY = 2f
+            )
+        )
+    }
 }

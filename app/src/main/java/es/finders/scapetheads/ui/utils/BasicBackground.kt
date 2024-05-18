@@ -1,6 +1,7 @@
 package es.finders.scapetheads.ui.utils
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -9,10 +10,21 @@ import es.finders.scapetheads.R
 
 @Composable
 fun BasicBackground(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.background),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = modifier
-    )
+    val darkTheme: Boolean = isSystemInDarkTheme()
+    if (darkTheme) {
+        Image(
+            painter = painterResource(id = R.drawable.background),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+        )
+    } else {
+
+        Image(
+            painter = painterResource(id = R.drawable.background),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+        )
+    }
 }
