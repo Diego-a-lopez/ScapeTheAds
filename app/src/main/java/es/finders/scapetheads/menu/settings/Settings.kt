@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -129,10 +128,13 @@ fun BottomButtonsSection(
         Logo(modifier = Modifier.align(Alignment.CenterHorizontally))
         LabeledSetting(stringResource(R.string.language))
         LanguageSettings(ctx, onSpanish, onEnglish, preferencesLanguageFlow)
+
+
         Spacer(modifier = Modifier.height(16.dp))
         LabeledSetting(stringResource(R.string.volume))
+
         VolumeSettings(ctx, onVolume, preferencesVolumeFlow)
-        Spacer(modifier = Modifier.height(16.dp))
+        /*Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.padding(end = 32.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +142,7 @@ fun BottomButtonsSection(
         ) {
             LabeledSetting(stringResource(R.string.theme))
             ThemeSettings(ctx, onTheme, preferencesThemeFlow)
-        }
+        }*/
         //Spacer(modifier = Modifier.width(16.dp))
         //ThemeSettings(ctx, onTheme, preferencesThemeFlow)
     }

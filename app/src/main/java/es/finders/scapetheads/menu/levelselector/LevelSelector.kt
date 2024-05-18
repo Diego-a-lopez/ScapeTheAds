@@ -16,24 +16,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import es.finders.scapetheads.R
-import es.finders.scapetheads.ui.theme.BeigeBackground
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BackButton
-import es.finders.scapetheads.ui.utils.ButtonItem
-import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -59,14 +55,15 @@ fun LevelSelectorScreen(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
+        val colorScheme = MaterialTheme.colorScheme
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             Card(
-                border = BorderStroke(2.dp, Color.Black),
-                backgroundColor = BeigeBackground,
+                border = BorderStroke(2.dp, colorScheme.tertiary),
+                backgroundColor = colorScheme.background,
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
                     .padding(bottom = 12.dp),
@@ -76,8 +73,8 @@ fun LevelSelectorScreen(
             FlowRow(modifier = Modifier.padding(8.dp)) {
                 levels.forEach { level ->
                     Card(
-                        border = BorderStroke(2.dp, Color.Black),
-                        backgroundColor = BeigeBackground,
+                        border = BorderStroke(2.dp, colorScheme.tertiary),
+                        backgroundColor = colorScheme.background,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
@@ -112,12 +109,13 @@ fun LevelSelectorScreen(
 @Preview(showBackground = false, showSystemUi = true)
 @Composable
 private fun LevelSelectorScreenPreview() {
+    val colorScheme = MaterialTheme.colorScheme
     val data = LevelData(name = "1", id = 1, metadata = "Level 1: Dodge the falling blocks")
     ScapeTheAddsTheme {
         //LevelSelectorScreen({}, {})
         Card(
-            border = BorderStroke(2.dp, Color.Black),
-            backgroundColor = BeigeBackground,
+            border = BorderStroke(2.dp, colorScheme.tertiary),
+            backgroundColor = colorScheme.background,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

@@ -53,7 +53,7 @@ fun GameOverScreen(
                 shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(3.dp, colorScheme.tertiary),
             ) {
-                Column {
+                Column(modifier = Modifier.background(colorScheme.background)) {
                     Row(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
