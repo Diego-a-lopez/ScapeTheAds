@@ -193,7 +193,7 @@ class MainActivity : ComponentActivity() {
                     BasicBackground(Modifier.fillMaxSize())
                     val navController = rememberNavController()
                     val ctx = LocalContext.current
-                    NavHost(navController = navController, startDestination = "sing_in") {
+                    NavHost(navController = navController, startDestination = "sign_in") {
                         composable("sign_in") {
                             val viewModel = viewModel<SignInViewModel>()
                             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -379,7 +379,7 @@ class MainActivity : ComponentActivity() {
                                         dataStore.edit { settings ->
                                             settings[PreferencesKeys.LANGUAGE_KEY] = "en"
                                         }
-                                        navController.navigate("settings")
+                                        navController.popBackStack()
                                     }
                                     Toast.makeText(
                                         applicationContext,
@@ -392,7 +392,7 @@ class MainActivity : ComponentActivity() {
                                         dataStore.edit { settings ->
                                             settings[PreferencesKeys.LANGUAGE_KEY] = "es"
                                         }
-                                        navController.navigate("settings")
+                                        navController.popBackStack()
                                     }
                                     Toast.makeText(
                                         applicationContext,
