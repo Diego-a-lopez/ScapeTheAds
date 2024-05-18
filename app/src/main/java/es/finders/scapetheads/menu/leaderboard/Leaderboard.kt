@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +31,10 @@ import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
 import es.finders.scapetheads.services.APIService.HighScore
 import es.finders.scapetheads.services.firestore.FirestoreClient
+import es.finders.scapetheads.ui.theme.BlackTertiary
+import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
+import es.finders.scapetheads.ui.theme.WhiteSecondary
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
@@ -86,23 +88,25 @@ fun LeaderboardScreen(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        LeaderboardLayout(ctx, onExit, scoresType, modifier.fillMaxSize(), highScores)
+        LeaderboardLayout(ctx, scoresType, modifier.fillMaxSize(), highScores)
+        BackButton(
+            onExit, Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 20.dp)
+        )
     }
 }
 
 @Composable
 fun LeaderboardLayout(
     ctx: Context,
-    onExit: () -> Unit,
     scoresType: String,
     modifier: Modifier = Modifier,
     highScores: List<HighScore>,
 ) {
-    CardBackgroundColumn (
+    CardBackgroundColumn(
         horizontalAlignment = Alignment.Start
     ) {
-        // Upper Left Arrow to go back to home screen
-        BackButton(onExit)
         // Container for user info rows
         // Load local or global scores based on scoresType
         if (scoresType == stringResource(R.string.local_scores)) {
@@ -186,17 +190,18 @@ fun UserInfoRow(
     date: String,
     score: String,
     time: String,
-    colorScheme: ColorScheme = ScapeTheAddsTheme {}
 ) {
     // Variables for styling
     val paddingValue = 16.dp
     val scorePaddingValue = 8.dp
-    val textColor = colorScheme.onPrimary
+    val textColor = WhiteSecondary//colorScheme.onPrimary
     Surface(
-        modifier = Modifier.fillMaxWidth().padding(6.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(6.dp),
         shape = MaterialTheme.shapes.medium,
-        color = colorScheme.primary,
-        border = BorderStroke(3.dp, colorScheme.onPrimary),
+        color = RedPrimary,//colorScheme.primary,
+        border = BorderStroke(3.dp, BlackTertiary),//colorScheme.onPrimary),
     ) {
         Row(
             modifier = Modifier.padding(paddingValue),

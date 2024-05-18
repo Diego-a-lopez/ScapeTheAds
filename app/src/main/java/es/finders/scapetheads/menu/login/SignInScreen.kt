@@ -58,29 +58,23 @@ fun SignInScreen(
         Logo()
         Spacer(Modifier.size(100.dp))
         // TODO: Add login via email/password and/or anonymous
-        /*OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            modifier = Modifier,
-            placeholder = { Text(text = stringResource(R.string.email)) },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
-            ),
-            shape = RoundedCornerShape(35),
+        /*
+        TextInput(
+            email,
+            { email = it },
+            { Text(text = stringResource(R.string.email)) }
         )
         Spacer(Modifier.size(16.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = Modifier,
-            placeholder = { Text(text = stringResource(R.string.password)) },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-            ),
-            shape = RoundedCornerShape(35),
-            visualTransformation = PasswordVisualTransformation() // Hide password characters
+        TextInput(
+            password,
+            { password = it },
+            { Text(text = stringResource(R.string.email)) }
+        )
+        TextInput(
+            password,
+            { password = it },
+            { Text(text = stringResource(R.string.email)) },
+            visualTransformation = PasswordVisualTransformation()
         )
         Spacer(Modifier.size(16.dp))
         ButtonItem(
@@ -90,7 +84,8 @@ fun SignInScreen(
                 .padding(top = 5.dp, bottom = 20.dp)
                 .fillMaxWidth(0.70f)
         )
-        Spacer(Modifier.size(16.dp))*/
+        Spacer(Modifier.size(16.dp))
+        */
         // Text(text = stringResource(R.string.or))
         Button(
             onClick = onSignInClick,

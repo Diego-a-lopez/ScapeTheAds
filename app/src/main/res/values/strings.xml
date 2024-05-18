@@ -28,4 +28,6 @@
     <string name="exit">Exit</string>
     <string name="date">Date</string>
     <string name="or">or</string>
+    <string name="english">English</string>
+    <string name="spanish">Spanish</string>
 </resources>

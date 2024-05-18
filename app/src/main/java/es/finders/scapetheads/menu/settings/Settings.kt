@@ -54,7 +54,6 @@ fun SettingsScreen(
     ) {
         SettingsScreenLayout(
             modifier.fillMaxSize(),
-            onExit,
             onSpanish,
             onEnglish,
             preferencesLanguageFlow,
@@ -63,13 +62,18 @@ fun SettingsScreen(
             onTheme,
             preferencesThemeFlow
         )
+
+        BackButton(
+            onExit, Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 20.dp)
+        )
     }
 }
 
 @Composable
 fun SettingsScreenLayout(
     modifier: Modifier = Modifier,
-    onExit: () -> Unit,
     onSpanish: () -> Unit,
     onEnglish: () -> Unit,
     preferencesLanguageFlow: Flow<String>,
@@ -84,7 +88,6 @@ fun SettingsScreenLayout(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.SpaceAround,
     ) {
-        BackButton(onExit)
         BottomButtonsSection(
             ctx,
             onSpanish,
@@ -131,7 +134,7 @@ fun BottomButtonsSection(
         VolumeSettings(ctx, onVolume, preferencesVolumeFlow)
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            modifier = Modifier.padding(end=32.dp),
+            modifier = Modifier.padding(end = 32.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
@@ -159,8 +162,7 @@ fun LanguageSettings(
     onEnglish: () -> Unit,
     preferencesLanguageFlow: Flow<String>
 ) {
-    //TODO: actually change language
-    val languageState = preferencesLanguageFlow.collectAsState(initial = "English")
+    val languageState by preferencesLanguageFlow.collectAsState(initial = "en")
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
         .fillMaxWidth()
@@ -170,14 +172,21 @@ fun LanguageSettings(
             .padding(horizontal = 16.dp)
             .padding(vertical = 8.dp),
     ) {
-        ButtonItem("English", {
-            onEnglish()
-        }, buttonModifier)
-        ButtonItem("Spanish", {
-            onSpanish()
-        }, buttonModifier)
+        ButtonItem(
+            text = stringResource(R.string.english),
+            onClick = { onEnglish() },
+            modifier = buttonModifier,
+            enabled = languageState != "en"
+        )
+        ButtonItem(
+            text = stringResource(R.string.spanish),
+            onClick = { onSpanish() },
+            modifier = buttonModifier,
+            enabled = languageState != "es"
+        )
     }
 }
+
 
 /*
 @Composable
