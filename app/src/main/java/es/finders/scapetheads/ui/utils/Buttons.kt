@@ -72,6 +72,7 @@ fun SignInButton(
         )
         Text(
             text = stringResource(R.string.sign_in_with_google),
+            color = colorScheme.onTertiary,
             modifier = Modifier.padding(6.dp)
         )
     }
@@ -228,7 +229,7 @@ fun IconOnlyButtonItem(
         modifier = modifier,
         shape = RoundedCornerShape(35),
         contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, colorScheme.tertiary),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorScheme.primary
         )

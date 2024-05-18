@@ -14,7 +14,7 @@ fun Title(modifier: Modifier = Modifier) {
     val darkTheme: Boolean = isSystemInDarkTheme()
     if (darkTheme) {
         Image(
-            painter = painterResource(id = R.drawable.title),
+            painter = painterResource(id = R.drawable.dark_title),
             contentDescription = null,
             contentScale = ContentScale.Inside,
             modifier = modifier.graphicsLayer(

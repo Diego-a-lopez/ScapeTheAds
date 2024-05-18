@@ -13,7 +13,7 @@ fun BasicBackground(modifier: Modifier = Modifier) {
     val darkTheme: Boolean = isSystemInDarkTheme()
     if (darkTheme) {
         Image(
-            painter = painterResource(id = R.drawable.background),
+            painter = painterResource(id = R.drawable.dark_background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier

@@ -13,7 +13,7 @@ fun Logo(modifier: Modifier = Modifier) {
     val darkTheme: Boolean = isSystemInDarkTheme()
     if (darkTheme) {
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = R.drawable.dark_logo),
             contentDescription = null,
             contentScale = ContentScale.None,
             modifier = modifier
