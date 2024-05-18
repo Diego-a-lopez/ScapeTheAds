@@ -20,39 +20,38 @@ import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
 
 @Composable
-fun VictoryScreen(onExit: () -> Unit, modifier: Modifier = Modifier) {
+fun LevelOver(onExit: () -> Unit, victory: Boolean = true, modifier: Modifier = Modifier) {
     Box(
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        VictoryLayout(onExit, modifier.fillMaxSize())
+        CardBackgroundColumn(
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (victory) {
+                OutlineTextSection(stringResource(R.string.level_completed))
+            } else {
+                OutlineTextSection(stringResource(R.string.you_lose))
+            }
+            Spacer(Modifier.size(300.dp))
+            Spacer(Modifier.size(16.dp))
+            ButtonItem(
+                stringResource(R.string.next),
+                onExit,
+                Modifier
+                    .padding(top = 5.dp, bottom = 20.dp)
+                    .fillMaxWidth(0.70f)
+            )
+        }
     }
 }
 
 @Preview(showBackground = false, showSystemUi = true)
 @Composable
-private fun VictoryScreenPreview() {
+private fun LevelOverPreview() {
     ScapeTheAddsTheme {
-        VictoryScreen({})
-    }
-}
-
-@Composable
-fun VictoryLayout(onExit: () -> Unit, modifier: Modifier = Modifier) {
-    CardBackgroundColumn(
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        OutlineTextSection(stringResource(R.string.level_completed))
-        Spacer(Modifier.size(300.dp))
-        Spacer(Modifier.size(16.dp))
-        ButtonItem(
-            stringResource(R.string.next),
-            onExit,
-            Modifier
-                .padding(top = 5.dp, bottom = 20.dp)
-                .fillMaxWidth(0.70f)
-        )
+        LevelOver({})
     }
 }
 
