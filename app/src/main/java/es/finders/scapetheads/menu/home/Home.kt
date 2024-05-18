@@ -3,6 +3,7 @@ package es.finders.scapetheads.menu.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import es.finders.scapetheads.R
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.IconButtonItem
+import es.finders.scapetheads.ui.utils.IconOnlyButtonItem
 import es.finders.scapetheads.ui.utils.Logo
 import es.finders.scapetheads.ui.utils.Title
 
@@ -113,22 +115,24 @@ fun BottomButtonsSection(
             onLeaderboard,
             buttonModifier
         )
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            val smallButtonModifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+            // SETTINGS
+            IconOnlyButtonItem(
+                stringResource(R.string.settings),
+                Icons.Outlined.Settings,
+                onSettings,
+                smallButtonModifier
+            )
 
-        // SETTINGS
-        IconButtonItem(
-            stringResource(R.string.settings),
-            Icons.Outlined.Settings,
-            onSettings,
-            buttonModifier
-        )
-
-        // EXIT
-        IconButtonItem(
-            stringResource(R.string.exit),
-            Icons.Outlined.ExitToApp,
-            onSignOut,
-            buttonModifier
-        )
+            // EXIT
+            IconOnlyButtonItem(
+                stringResource(R.string.exit),
+                Icons.Outlined.ExitToApp,
+                onSignOut,
+                smallButtonModifier
+            )
+        }
     }
 }
 

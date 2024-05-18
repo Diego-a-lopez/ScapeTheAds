@@ -177,6 +177,27 @@ fun IconButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifie
     }
 }
 
+@Composable
+fun IconOnlyButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier) {
+    Button(
+        onClick = { onClick() },
+        modifier = modifier,
+        shape = RoundedCornerShape(35),
+        contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
+        border = BorderStroke(1.dp, Color.Black),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = RedPrimary
+        )
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = text,
+            tint = Color.White,
+            modifier = Modifier
+        )
+    }
+}
+
 @Preview
 @Composable
 fun ExitShape() {
