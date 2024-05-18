@@ -31,10 +31,7 @@ import es.finders.scapetheadds.AndroidRoom.LocalScoreState
 import es.finders.scapetheads.R
 import es.finders.scapetheads.services.APIService.HighScore
 import es.finders.scapetheads.services.firestore.FirestoreClient
-import es.finders.scapetheads.ui.theme.BlackTertiary
-import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
-import es.finders.scapetheads.ui.theme.WhiteSecondary
 import es.finders.scapetheads.ui.utils.BackButton
 import es.finders.scapetheads.ui.utils.CardBackgroundColumn
 import es.finders.scapetheads.ui.utils.OutlineTextSection
@@ -191,17 +188,18 @@ fun UserInfoRow(
     score: String,
     time: String,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     // Variables for styling
     val paddingValue = 16.dp
     val scorePaddingValue = 8.dp
-    val textColor = WhiteSecondary//colorScheme.onPrimary
+    val textColor = colorScheme.onPrimary
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp),
         shape = MaterialTheme.shapes.medium,
-        color = RedPrimary,//colorScheme.primary,
-        border = BorderStroke(3.dp, BlackTertiary),//colorScheme.onPrimary),
+        color = colorScheme.primary,
+        border = BorderStroke(3.dp, colorScheme.onPrimary),
     ) {
         Row(
             modifier = Modifier.padding(paddingValue),

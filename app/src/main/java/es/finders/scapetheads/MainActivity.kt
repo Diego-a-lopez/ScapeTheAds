@@ -177,7 +177,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     BasicBackground(Modifier.fillMaxSize())
-                    NavHost(navController = navController, startDestination = "sign_in") {
+                    NavHost(navController = navController, startDestination = "home") {
                         composable("sign_in") {
                             Log.d("NAVIGATION", "Sign in")
                             val viewModel = viewModel<SignInViewModel>()

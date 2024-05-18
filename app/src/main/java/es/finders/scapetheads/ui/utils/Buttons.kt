@@ -1,6 +1,7 @@
 package es.finders.scapetheads.ui.utils
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,6 +37,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,34 +47,59 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import es.finders.scapetheads.ui.theme.BeigeBackground
+import es.finders.scapetheads.R
 import es.finders.scapetheads.ui.theme.Kalam
-import es.finders.scapetheads.ui.theme.RedPrimary
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
-import es.finders.scapetheads.ui.theme.WhiteSecondary
+
+@Composable
+fun SignInButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier.padding(start = 4.dp, end = 4.dp),
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(6.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorScheme.tertiary,
+            contentColor = colorScheme.onTertiary
+        )
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_logo_google),
+            contentDescription = ""
+        )
+        Text(
+            text = stringResource(R.string.sign_in_with_google),
+            modifier = Modifier.padding(6.dp)
+        )
+    }
+}
 
 @Composable
 fun ButtonItem(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Button(
-        onClick = { onClick() },
+        onClick = onClick,
         modifier = modifier,
         enabled = enabled,
         shape = RoundedCornerShape(35),
         contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, colorScheme.tertiary),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (enabled) RedPrimary else WhiteSecondary
+            containerColor = if (enabled) colorScheme.primary else colorScheme.onPrimary
         )
     ) {
         Text(
             text = text,
             textAlign = TextAlign.Center,
-            color = if (enabled) WhiteSecondary else RedPrimary,
+            color = if (enabled) colorScheme.secondary else colorScheme.onSecondary,
             fontSize = 5.em,
             fontFamily = Kalam,
             fontWeight = FontWeight.Bold
@@ -80,13 +109,15 @@ fun ButtonItem(
 
 @Composable
 fun BackButton(
-    onClick: () -> Unit, modifier: Modifier = Modifier
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier
             .size(50.dp)
             .clip(CustomExitButton(cornerRadius = 5.dp))
-            .background(BeigeBackground)
+            .background(colorScheme.background)
             .wrapContentHeight(Alignment.CenterVertically)
             .wrapContentWidth(Alignment.End)
     ) {
@@ -95,7 +126,7 @@ fun BackButton(
                 .height(43.dp)
                 .width(46.dp)
                 .clip(CustomExitButton(cornerRadius = 5.dp))
-                .background(RedPrimary)
+                .background(colorScheme.primary)
         ) {
             Column(
                 Modifier
@@ -107,7 +138,7 @@ fun BackButton(
                 Icon(
                     imageVector = Icons.Default.Clear,
                     contentDescription = "Back",
-                    tint = BeigeBackground,
+                    tint = colorScheme.background,
                     modifier = Modifier
                         .size(45.dp)
                         .clickable {
@@ -121,6 +152,7 @@ fun BackButton(
 
 @Composable
 fun IconButtonItem(text: String, icon: Painter, onClick: () -> Unit, modifier: Modifier) {
+    val colorScheme = MaterialTheme.colorScheme
     Button(
         onClick = { onClick() },
         modifier = modifier,
@@ -128,19 +160,19 @@ fun IconButtonItem(text: String, icon: Painter, onClick: () -> Unit, modifier: M
         contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
         border = BorderStroke(1.dp, Color.Black),
         colors = ButtonDefaults.buttonColors(
-            containerColor = RedPrimary
-        )
+            containerColor = colorScheme.primary
+        ),
     ) {
         Icon(
             painter = icon,
             contentDescription = text,
-            tint = Color.White,
+            tint = colorScheme.onPrimary,
             modifier = Modifier.padding(end = 6.dp)
         )
         Text(
             text = text,
             textAlign = TextAlign.Center,
-            color = Color.White,
+            color = colorScheme.onPrimary,
             fontSize = 5.em,
             fontFamily = Kalam,
             fontWeight = FontWeight.Bold
@@ -149,15 +181,21 @@ fun IconButtonItem(text: String, icon: Painter, onClick: () -> Unit, modifier: M
 }
 
 @Composable
-fun IconButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier) {
+fun IconButtonItem(
+    text: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier,
+) {
+    val colorScheme = MaterialTheme.colorScheme
     Button(
-        onClick = { onClick() },
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(35),
         contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
         border = BorderStroke(1.dp, Color.Black),
         colors = ButtonDefaults.buttonColors(
-            containerColor = RedPrimary
+            containerColor = colorScheme.primary
         )
     ) {
         Icon(
@@ -178,21 +216,27 @@ fun IconButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifie
 }
 
 @Composable
-fun IconOnlyButtonItem(text: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier) {
+fun IconOnlyButtonItem(
+    text: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier,
+) {
+    val colorScheme = MaterialTheme.colorScheme
     Button(
-        onClick = { onClick() },
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(35),
         contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
         border = BorderStroke(1.dp, Color.Black),
         colors = ButtonDefaults.buttonColors(
-            containerColor = RedPrimary
+            containerColor = colorScheme.primary
         )
     ) {
         Icon(
             imageVector = icon,
             contentDescription = text,
-            tint = Color.White,
+            tint = colorScheme.onPrimary,
             modifier = Modifier
         )
     }
@@ -253,5 +297,4 @@ class CustomExitButton(
         }
         return Outline.Generic(path)
     }
-
 }

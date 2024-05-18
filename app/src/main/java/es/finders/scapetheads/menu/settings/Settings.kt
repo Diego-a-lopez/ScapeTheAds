@@ -217,22 +217,25 @@ fun LanguageSettings(ctx: Context) {
 fun VolumeSettings(
     ctx: Context,
     onVolume: (newVolumeValue: Int) -> Unit,
-    preferencesVolumeFlow: Flow<Int>
+    preferencesVolumeFlow: Flow<Int>,
 ) {
-    val volumeState by preferencesVolumeFlow.collectAsState(initial = 50)
+    val colorScheme = MaterialTheme.colorScheme
+    ScapeTheAddsTheme {
+        val volumeState by preferencesVolumeFlow.collectAsState(initial = 50)
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Slider(
-            value = volumeState.toFloat() / 100,
-            onValueChange = {
-                onVolume((it * 100).toInt())
-            }
-        )
-        Text(text = volumeState.toFloat().toString())
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Slider(
+                value = volumeState.toFloat() / 100,
+                onValueChange = {
+                    onVolume((it * 100).toInt())
+                }
+            )
+            Text(text = volumeState.toFloat().toString(), color = colorScheme.primary)
+        }
+
     }
-
 }
 
 @Composable
