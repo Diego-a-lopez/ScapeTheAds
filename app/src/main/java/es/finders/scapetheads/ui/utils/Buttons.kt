@@ -2,7 +2,6 @@ package es.finders.scapetheads.ui.utils
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
@@ -37,7 +35,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,21 +50,27 @@ import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.theme.WhiteSecondary
 
 @Composable
-fun ButtonItem(text: String, onClick: () -> Unit, modifier: Modifier) {
+fun ButtonItem(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier,
+    enabled: Boolean = true
+) {
     Button(
         onClick = { onClick() },
         modifier = modifier,
+        enabled = enabled,
         shape = RoundedCornerShape(35),
         contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
         border = BorderStroke(1.dp, Color.Black),
         colors = ButtonDefaults.buttonColors(
-            containerColor = RedPrimary
+            containerColor = if (enabled) RedPrimary else WhiteSecondary
         )
     ) {
         Text(
             text = text,
             textAlign = TextAlign.Center,
-            color = Color.White,
+            color = if (enabled) WhiteSecondary else RedPrimary,
             fontSize = 5.em,
             fontFamily = Kalam,
             fontWeight = FontWeight.Bold

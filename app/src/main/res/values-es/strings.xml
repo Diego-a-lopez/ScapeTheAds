@@ -27,4 +27,6 @@
     <string name="exit">Salir</string>
     <string name="date">Date</string>
     <string name="or">o</string>
+    <string name="english">Inglés</string>
+    <string name="spanish">Español</string>
 </resources>

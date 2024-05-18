@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -61,6 +62,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -130,6 +132,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    fun updateLocale(context: Context, language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration(context.resources.configuration)
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+    }
+
     suspend fun initiateDataStore() {
         applicationContext.dataStore.edit { settings ->
             settings[PreferencesKeys.LANGUAGE_KEY] = "English"
@@ -159,12 +170,22 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, UnityBridge::class.java)
         startService(intent)
 
+        val languageFlow: Flow<String> = dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.LANGUAGE_KEY] ?: "en"
+        }
         //TODO: better way to do this? (runBlocking)
         //maybe this is enough tho, since it is a light operation
         runBlocking {
             initiateDataStore()
         }
         setContent {
+            val language by languageFlow.collectAsState(initial = "en")
+            val ctx = LocalContext.current
+
+            LaunchedEffect(language) {
+                updateLocale(ctx, language)
+            }
+
             ScapeTheAddsTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -172,7 +193,7 @@ class MainActivity : ComponentActivity() {
                     BasicBackground(Modifier.fillMaxSize())
                     val navController = rememberNavController()
                     val ctx = LocalContext.current
-                    NavHost(navController = navController, startDestination = "sign_in") {
+                    NavHost(navController = navController, startDestination = "sing_in") {
                         composable("sign_in") {
                             val viewModel = viewModel<SignInViewModel>()
                             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -354,10 +375,11 @@ class MainActivity : ComponentActivity() {
                                     navController.popBackStack()
                                 },
                                 onEnglish = {
-                                    runBlocking {
+                                    lifecycleScope.launch {
                                         dataStore.edit { settings ->
-                                            settings[PreferencesKeys.LANGUAGE_KEY] = "English"
+                                            settings[PreferencesKeys.LANGUAGE_KEY] = "en"
                                         }
+                                        navController.navigate("settings")
                                     }
                                     Toast.makeText(
                                         applicationContext,
@@ -366,10 +388,11 @@ class MainActivity : ComponentActivity() {
                                     ).show()
                                 },
                                 onSpanish = {
-                                    runBlocking {
+                                    lifecycleScope.launch {
                                         dataStore.edit { settings ->
-                                            settings[PreferencesKeys.LANGUAGE_KEY] = "Spanish"
+                                            settings[PreferencesKeys.LANGUAGE_KEY] = "es"
                                         }
+                                        navController.navigate("settings")
                                     }
                                     Toast.makeText(
                                         applicationContext,
@@ -378,28 +401,28 @@ class MainActivity : ComponentActivity() {
                                     ).show()
                                 },
                                 preferencesLanguageFlow = preferencesLanguageFlow,
-                                onVolume = {
-                                    runBlocking {
+                                onVolume = { volume ->
+                                    lifecycleScope.launch {
                                         dataStore.edit { settings ->
-                                            settings[PreferencesKeys.VOLUME_KEY] = it
+                                            settings[PreferencesKeys.VOLUME_KEY] = volume
                                         }
                                     }
                                     Toast.makeText(
                                         applicationContext,
-                                        "Volume changed to $it%",
+                                        "Volume changed to $volume%",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 },
                                 preferencesVolumeFlow = preferencesVolumeFlow,
-                                onTheme = {
-                                    runBlocking {
+                                onTheme = { isDark ->
+                                    lifecycleScope.launch {
                                         dataStore.edit { settings ->
-                                            settings[PreferencesKeys.THEME_KEY] = it
+                                            settings[PreferencesKeys.THEME_KEY] = isDark
                                         }
                                     }
                                     Toast.makeText(
                                         applicationContext,
-                                        "Theme changed to ${if (it) "Dark" else "Light"}",
+                                        "Theme changed to ${if (isDark) "Dark" else "Light"}",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 },

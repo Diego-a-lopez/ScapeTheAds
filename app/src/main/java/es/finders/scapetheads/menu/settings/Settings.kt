@@ -162,8 +162,7 @@ fun LanguageSettings(
     onEnglish: () -> Unit,
     preferencesLanguageFlow: Flow<String>
 ) {
-    // TODO: actually change language
-    val languageState = preferencesLanguageFlow.collectAsState(initial = "English")
+    val languageState by preferencesLanguageFlow.collectAsState(initial = "en")
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
         .fillMaxWidth()
@@ -173,14 +172,21 @@ fun LanguageSettings(
             .padding(horizontal = 16.dp)
             .padding(vertical = 8.dp),
     ) {
-        ButtonItem("English", {
-            onEnglish()
-        }, buttonModifier)
-        ButtonItem("Spanish", {
-            onSpanish()
-        }, buttonModifier)
+        ButtonItem(
+            text = stringResource(R.string.english),
+            onClick = { onEnglish() },
+            modifier = buttonModifier,
+            enabled = languageState != "en"
+        )
+        ButtonItem(
+            text = stringResource(R.string.spanish),
+            onClick = { onSpanish() },
+            modifier = buttonModifier,
+            enabled = languageState != "es"
+        )
     }
 }
+
 
 /*
 @Composable
