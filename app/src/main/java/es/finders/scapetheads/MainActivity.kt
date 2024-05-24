@@ -3,6 +3,7 @@ package es.finders.scapetheads
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -73,6 +74,8 @@ class MainActivity : ComponentActivity() {
 
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
+    private lateinit var mediaPlayer: MediaPlayer
+
     private object PreferencesKeys {
         val LANGUAGE_KEY = stringPreferencesKey("language")
         val VOLUME_KEY = intPreferencesKey("volume")
@@ -138,6 +141,25 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize MediaPlayer with the music file
+        mediaPlayer = MediaPlayer.create(this, R.raw.Jingle)
+        mediaPlayer.isLooping = true // Loop the music if necessary
+
+        // Start music playback
+        mediaPlayer.start()
+
+        // Observe volume changes
+        val preferencesVolumeFlow: Flow<Int> = dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.VOLUME_KEY] ?: 50
+        }
+
+        lifecycleScope.launch {
+            preferencesVolumeFlow.collect { volume ->
+                setMediaPlayerVolume(volume)
+            }
+        }
+
 
         val languageFlow: Flow<String> = dataStore.data.map { preferences ->
             preferences[PreferencesKeys.LANGUAGE_KEY] ?: "en"
@@ -488,6 +510,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setMediaPlayerVolume(volume: Int) {
+        val volumeLevel = volume / 100f
+        mediaPlayer.setVolume(volumeLevel, volumeLevel)
     }
 
     override fun onDestroy() {
