@@ -37,7 +37,7 @@ class UnityBridge : Service() {
     fun setLevel(level: Int) {
         setMode(JSONObject().apply {
             put("gamemode", "level")
-            put("gamemode", level)
+            put("level", level)
         })
     }
 

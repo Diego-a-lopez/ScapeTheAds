@@ -143,7 +143,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Initialize MediaPlayer with the music file
-        mediaPlayer = MediaPlayer.create(this, R.raw.Jingle)
+        mediaPlayer = MediaPlayer.create(this, R.raw.jingle)
         mediaPlayer.isLooping = true // Loop the music if necessary
 
         // Start music playback
