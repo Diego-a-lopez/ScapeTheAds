@@ -29,9 +29,9 @@ import es.finders.scapetheads.ui.utils.OutlineTextSection
 fun GameOverScreen(
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
-    stage: Int,
-    clearTime: Int,
-    score: Int
+    stage: Long,
+    clearTime: Long,
+    score: Long
 ) {
     // TODO: Store in local room score
     // TODO: Send to firestore data if highscore > current user highscore

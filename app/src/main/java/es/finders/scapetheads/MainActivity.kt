@@ -49,12 +49,14 @@ import es.finders.scapetheads.menu.login.SignInScreen
 import es.finders.scapetheads.menu.nickname.NicknameScreen
 import es.finders.scapetheads.menu.settings.SettingsScreen
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
+import es.finders.scapetheads.services.AndroidRoom.LocalScoreEvent
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
 import es.finders.scapetheads.services.AndroidRoom.user.UserNickname
 import es.finders.scapetheads.services.AndroidRoom.user.UserNicknameDatabase
 import es.finders.scapetheads.services.auth.GoogleAuthClient
 import es.finders.scapetheads.services.auth.SignInViewModel
 import es.finders.scapetheads.services.firestore.FirestoreClient
+import es.finders.scapetheads.services.firestore.HighScoreData
 import es.finders.scapetheads.services.singletons.appModule
 import es.finders.scapetheads.services.unity.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
@@ -67,6 +69,9 @@ import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import java.text.SimpleDateFormat
+import java.time.Instant.now
+import java.util.Date
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -201,7 +206,6 @@ class MainActivity : ComponentActivity() {
                     BasicBackground(Modifier.fillMaxSize())
                     NavHost(navController = navController, startDestination = "sign_in") {
                         composable("sign_in") {
-                            Log.d("NAVIGATION", "Sign in")
                             val viewModel = viewModel<SignInViewModel>()
                             val state by viewModel.state.collectAsStateWithLifecycle()
                             LaunchedEffect(key1 = Unit) {
@@ -295,7 +299,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("home") {
-                            Log.d("NAVIGATION", "Home")
                             HomeScreen(
                                 onExit = {
                                     lifecycleScope.launch {
@@ -375,7 +378,6 @@ class MainActivity : ComponentActivity() {
                         composable("leaderboard") {
                             // TODO: Check if state reloads correctly when new scores are added
                             val state by viewModel.state.collectAsState()
-                            Log.d("TEST", scoreMode)
                             LeaderboardScreen(
                                 onExit = {
                                     navController.popBackStack()
@@ -466,10 +468,27 @@ class MainActivity : ComponentActivity() {
                                 navArgument("clearTime") { type = NavType.IntType },
                                 navArgument("score") { type = NavType.IntType }
                             )) { backStackEntry ->
-                            val stage = backStackEntry.arguments?.getInt("stage") ?: 0
-                            val clearTime = backStackEntry.arguments?.getInt("clearTime") ?: 0
-                            val score = backStackEntry.arguments?.getInt("score") ?: 0
+                            val stage = backStackEntry.arguments?.getLong("stage") ?: 0
+                            val clearTime = backStackEntry.arguments?.getLong("clearTime") ?: 0
+                            val score = backStackEntry.arguments?.getLong("score") ?: 0
                             Log.d("NAVIGATION", "Game over")
+                            firestoreClient.addHighscore(
+                                HighScoreData(
+                                    nickname = currentUserNickname,
+                                    score = score,
+                                    time = clearTime,
+                                    date = now().epochSecond
+                                )
+                            )
+
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val formattedDate = dateFormat.format(Date())
+                            viewModel.onEvent(LocalScoreEvent.SetNickname(currentUserNickname))
+                            viewModel.onEvent(LocalScoreEvent.SetScoreVal(score.toString()))
+                            viewModel.onEvent(LocalScoreEvent.SetTime(clearTime.toString()))
+                            viewModel.onEvent(LocalScoreEvent.SetDate(formattedDate))
+                            viewModel.onEvent(LocalScoreEvent.SaveScore)
+
                             GameOverScreen(
                                 stage = stage,
                                 clearTime = clearTime,
@@ -484,7 +503,6 @@ class MainActivity : ComponentActivity() {
 
                         // Level select mode
                         composable("defeat") {
-                            Log.d("NAVIGATION", "Defeat")
                             LevelOver(
                                 onExit = {
                                     getSharedPreferences("GamePrefs", MODE_PRIVATE).edit().clear()
@@ -496,7 +514,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("victory") {
-                            Log.d("NAVIGATION", "Victory")
                             LevelOver(
                                 onExit = {
                                     getSharedPreferences("GamePrefs", MODE_PRIVATE).edit().clear()
