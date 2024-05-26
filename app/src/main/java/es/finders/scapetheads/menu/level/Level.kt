@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import com.unity3d.player.UnityPlayerActivity
 
 class Level : ComponentActivity() {
-    // TODO: Add more games in Unity using sensors (min 3-4)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ContextCompat.startActivity(

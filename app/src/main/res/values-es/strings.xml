@@ -31,4 +31,8 @@
     <string name="spanish">Español</string>
     <string name="game_over">Juego Terminado</string>
     <string name="levels_passed">"Niveles superados</string>
+    <string name="first_level_dodge_the_falling_blocks">Primer nivel: Esquiva los bloques que caen</string>
+    <string name="second_level_break_the_walls">Segundo nivel: Rompe los muros</string>
+    <string name="third_level_remove_the_cubes">Tercer nivel: Elimina los cubos</string>
+    <string name="fourth_level">Cuarto nivel: Coming soon</string>
 </resources>

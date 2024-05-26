@@ -376,7 +376,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("leaderboard") {
-                            // TODO: Check if state reloads correctly when new scores are added
                             val state by viewModel.state.collectAsState()
                             LeaderboardScreen(
                                 onExit = {

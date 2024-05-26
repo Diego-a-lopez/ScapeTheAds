@@ -33,8 +33,6 @@ fun GameOverScreen(
     clearTime: Long,
     score: Long
 ) {
-    // TODO: Store in local room score
-    // TODO: Send to firestore data if highscore > current user highscore
     Box(
         modifier,
         contentAlignment = Alignment.Center,
@@ -58,7 +56,10 @@ fun GameOverScreen(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = stringResource(R.string.levels_passed)+":", color = colorScheme.onBackground)
+                        Text(
+                            text = stringResource(R.string.levels_passed) + ":",
+                            color = colorScheme.onBackground
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = "$stage", color = colorScheme.onBackground)
                     }
@@ -66,17 +67,29 @@ fun GameOverScreen(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text =  stringResource(R.string.time)+":", color = colorScheme.onBackground)
+                        Text(
+                            text = stringResource(R.string.time) + ":",
+                            color = colorScheme.onBackground
+                        )
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "$clearTime " +  stringResource(R.string.seconds), color = colorScheme.onBackground)
+                        Text(
+                            text = "$clearTime " + stringResource(R.string.seconds),
+                            color = colorScheme.onBackground
+                        )
                     }
                     Row(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = stringResource(R.string.score)+":", color = colorScheme.onBackground)
+                        Text(
+                            text = stringResource(R.string.score) + ":",
+                            color = colorScheme.onBackground
+                        )
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "$score " + stringResource(R.string.points), color = colorScheme.onBackground)
+                        Text(
+                            text = "$score " + stringResource(R.string.points),
+                            color = colorScheme.onBackground
+                        )
                     }
                 }
 
