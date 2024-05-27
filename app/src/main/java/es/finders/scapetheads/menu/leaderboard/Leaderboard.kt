@@ -199,7 +199,7 @@ fun UserInfoRow(
             .padding(6.dp),
         shape = MaterialTheme.shapes.medium,
         color = colorScheme.primary,
-        border = BorderStroke(3.dp, colorScheme.onPrimary),
+        border = BorderStroke(3.dp, colorScheme.tertiary),
     ) {
         Row(
             modifier = Modifier.padding(paddingValue),
