@@ -49,39 +49,44 @@ import es.finders.scapetheads.menu.login.SignInScreen
 import es.finders.scapetheads.menu.nickname.NicknameScreen
 import es.finders.scapetheads.menu.settings.SettingsScreen
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreDatabase
+import es.finders.scapetheads.services.AndroidRoom.LocalScoreEvent
 import es.finders.scapetheads.services.AndroidRoom.LocalScoreViewModel
 import es.finders.scapetheads.services.AndroidRoom.user.UserNickname
 import es.finders.scapetheads.services.AndroidRoom.user.UserNicknameDatabase
 import es.finders.scapetheads.services.auth.GoogleAuthClient
 import es.finders.scapetheads.services.auth.SignInViewModel
 import es.finders.scapetheads.services.firestore.FirestoreClient
+import es.finders.scapetheads.services.firestore.HighScoreData
 import es.finders.scapetheads.services.singletons.appModule
 import es.finders.scapetheads.services.unity.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import java.text.SimpleDateFormat
+import java.time.Instant.now
+import java.util.Date
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
-
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
     private lateinit var mediaPlayer: MediaPlayer
+    private var isUnityLaunching: Boolean = false
 
     private object PreferencesKeys {
         val LANGUAGE_KEY = stringPreferencesKey("language")
         val VOLUME_KEY = intPreferencesKey("volume")
         val THEME_KEY = booleanPreferencesKey("theme")
+        val INITIALIZED_KEY = booleanPreferencesKey("initialized")
     }
-
 
     private val googleAuthUiClient by lazy {
         GoogleAuthClient(
@@ -131,11 +136,16 @@ class MainActivity : ComponentActivity() {
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 
-    suspend fun initiateDataStore() {
-        applicationContext.dataStore.edit { settings ->
-            settings[PreferencesKeys.LANGUAGE_KEY] = "English"
-            settings[PreferencesKeys.VOLUME_KEY] = 50
-            settings[PreferencesKeys.THEME_KEY] = false
+    private suspend fun checkAndInitializeDataStore() {
+        val preferences = applicationContext.dataStore.data.first()
+        val isInitialized = preferences[PreferencesKeys.INITIALIZED_KEY] ?: false
+        if (!isInitialized) {
+            applicationContext.dataStore.edit { settings ->
+                settings[PreferencesKeys.LANGUAGE_KEY] = "en"
+                settings[PreferencesKeys.VOLUME_KEY] = 50
+                settings[PreferencesKeys.THEME_KEY] = false
+                settings[PreferencesKeys.INITIALIZED_KEY] = true
+            }
         }
     }
 
@@ -168,8 +178,9 @@ class MainActivity : ComponentActivity() {
             androidContext(this@MainActivity)
             modules(appModule)
         }
-        runBlocking {
-            initiateDataStore()
+
+        lifecycleScope.launch {
+            checkAndInitializeDataStore()
         }
 
         var scoreMode: String = getString(R.string.local_scores)
@@ -201,7 +212,6 @@ class MainActivity : ComponentActivity() {
                     BasicBackground(Modifier.fillMaxSize())
                     NavHost(navController = navController, startDestination = "sign_in") {
                         composable("sign_in") {
-                            Log.d("NAVIGATION", "Sign in")
                             val viewModel = viewModel<SignInViewModel>()
                             val state by viewModel.state.collectAsStateWithLifecycle()
                             LaunchedEffect(key1 = Unit) {
@@ -295,10 +305,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("home") {
-                            Log.d("NAVIGATION", "Home")
                             HomeScreen(
                                 onExit = {
                                     lifecycleScope.launch {
+                                        mediaPlayer.release()
                                         googleAuthUiClient.signOut()
                                         Toast.makeText(
                                             applicationContext,
@@ -320,6 +330,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("level_selector")
                                 },
                                 onPlay = {
+                                    isUnityLaunching = true
                                     unityBridge.setInfinite()
                                     ContextCompat.startActivity(
                                         ctx,
@@ -373,9 +384,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("leaderboard") {
-                            // TODO: Check if state reloads correctly when new scores are added
                             val state by viewModel.state.collectAsState()
-                            Log.d("TEST", scoreMode)
                             LeaderboardScreen(
                                 onExit = {
                                     navController.popBackStack()
@@ -389,7 +398,7 @@ class MainActivity : ComponentActivity() {
                         //Flow variable to the settings datastore to read is values  and pass them to the settings screen
                         val preferencesLanguageFlow: Flow<String> =
                             dataStore.data.map { preferences ->
-                                preferences[PreferencesKeys.LANGUAGE_KEY] ?: "English"
+                                preferences[PreferencesKeys.LANGUAGE_KEY] ?: "en"
                             }
                         val preferencesVolumeFlow: Flow<Int> = dataStore.data.map { preferences ->
                             preferences[PreferencesKeys.VOLUME_KEY] ?: 50
@@ -410,11 +419,6 @@ class MainActivity : ComponentActivity() {
                                         }
                                         navController.popBackStack()
                                     }
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "English",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 },
                                 onSpanish = {
                                     lifecycleScope.launch {
@@ -423,11 +427,6 @@ class MainActivity : ComponentActivity() {
                                         }
                                         navController.popBackStack()
                                     }
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Spanish",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 },
                                 preferencesLanguageFlow = preferencesLanguageFlow,
                                 onVolume = { volume ->
@@ -436,11 +435,6 @@ class MainActivity : ComponentActivity() {
                                             settings[PreferencesKeys.VOLUME_KEY] = volume
                                         }
                                     }
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Volume changed to $volume%",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 },
                                 preferencesVolumeFlow = preferencesVolumeFlow,
                                 onTheme = { isDark ->
@@ -466,10 +460,27 @@ class MainActivity : ComponentActivity() {
                                 navArgument("clearTime") { type = NavType.IntType },
                                 navArgument("score") { type = NavType.IntType }
                             )) { backStackEntry ->
-                            val stage = backStackEntry.arguments?.getInt("stage") ?: 0
-                            val clearTime = backStackEntry.arguments?.getInt("clearTime") ?: 0
-                            val score = backStackEntry.arguments?.getInt("score") ?: 0
+                            val stage = backStackEntry.arguments?.getLong("stage") ?: 0
+                            val clearTime = backStackEntry.arguments?.getLong("clearTime") ?: 0
+                            val score = backStackEntry.arguments?.getLong("score") ?: 0
                             Log.d("NAVIGATION", "Game over")
+                            firestoreClient.addHighscore(
+                                HighScoreData(
+                                    nickname = currentUserNickname,
+                                    score = score,
+                                    time = clearTime,
+                                    date = now().epochSecond
+                                )
+                            )
+
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val formattedDate = dateFormat.format(Date())
+                            viewModel.onEvent(LocalScoreEvent.SetNickname(currentUserNickname))
+                            viewModel.onEvent(LocalScoreEvent.SetScoreVal(score.toString()))
+                            viewModel.onEvent(LocalScoreEvent.SetTime(clearTime.toString()))
+                            viewModel.onEvent(LocalScoreEvent.SetDate(formattedDate))
+                            viewModel.onEvent(LocalScoreEvent.SaveScore)
+
                             GameOverScreen(
                                 stage = stage,
                                 clearTime = clearTime,
@@ -484,7 +495,6 @@ class MainActivity : ComponentActivity() {
 
                         // Level select mode
                         composable("defeat") {
-                            Log.d("NAVIGATION", "Defeat")
                             LevelOver(
                                 onExit = {
                                     getSharedPreferences("GamePrefs", MODE_PRIVATE).edit().clear()
@@ -496,7 +506,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("victory") {
-                            Log.d("NAVIGATION", "Victory")
                             LevelOver(
                                 onExit = {
                                     getSharedPreferences("GamePrefs", MODE_PRIVATE).edit().clear()
@@ -527,6 +536,21 @@ class MainActivity : ComponentActivity() {
                 Toast.LENGTH_LONG
             ).show()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isUnityLaunching && mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isUnityLaunching) {
+            mediaPlayer.start()
+        }
+        isUnityLaunching = false
     }
 
 }

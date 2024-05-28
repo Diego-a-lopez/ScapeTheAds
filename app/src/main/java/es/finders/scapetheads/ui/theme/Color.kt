@@ -3,7 +3,7 @@ package es.finders.scapetheads.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val PurplePrimary = Color(0xFF6650a4)
-val PurpleGreySecondary = Color(0xFF2C2740)
+val PurpleGreySecondary = Color(0xFFDBCFFF)
 val PurpleBlackTertiary = Color(0xFF282531)
 val PurpleGreyBackground = Color(0xACCCC2DC)
 

@@ -45,11 +45,30 @@ fun LevelSelectorScreen(
         .height(70.dp)
 
     val levels = listOf(
-        LevelData(name = "1", id = 1, metadata = "First level: Dodge the falling blocks"),
-        LevelData(name = "2", id = 2, metadata = "Second level: Coming soon"),
-        LevelData(name = "3", id = 3, metadata = "Third level: Coming soon"),
-        LevelData(name = "4", id = 4, metadata = "Fourth level: Coming soon"),
-        LevelData(name = "5", id = 5, metadata = "Fifth level: Coming soon")
+        LevelData(
+            name = "1",
+            id = 1,
+            metadata = stringResource(R.string.first_level_dodge_the_falling_blocks),
+            image = R.drawable.level1
+        ),
+        LevelData(
+            name = "2",
+            id = 2,
+            metadata = stringResource(R.string.second_level_break_the_walls),
+            image = R.drawable.level2
+        ),
+        LevelData(
+            name = "3",
+            id = 3,
+            metadata = stringResource(R.string.third_level_remove_the_cubes),
+            image = R.drawable.level3
+        ),
+        LevelData(
+            name = "4",
+            id = 4,
+            metadata = stringResource(R.string.fourth_level),
+            image = R.drawable.level1
+        ),
     )
     Box(
         modifier,
@@ -85,7 +104,7 @@ fun LevelSelectorScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             OutlineTextSection(level.metadata, textSize = 25.sp)
                             Image(
-                                painter = painterResource(id = R.drawable.level1),
+                                painter = painterResource(level.image),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
@@ -110,7 +129,12 @@ fun LevelSelectorScreen(
 @Composable
 private fun LevelSelectorScreenPreview() {
     val colorScheme = MaterialTheme.colorScheme
-    val data = LevelData(name = "1", id = 1, metadata = "Level 1: Dodge the falling blocks")
+    val data = LevelData(
+        name = "1",
+        id = 1,
+        metadata = "Level 1: Dodge the falling blocks",
+        image = R.drawable.level1
+    )
     ScapeTheAddsTheme {
         //LevelSelectorScreen({}, {})
         Card(
@@ -121,7 +145,7 @@ private fun LevelSelectorScreenPreview() {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 OutlineTextSection(data.metadata, textSize = 25.sp)
                 Image(
-                    painter = painterResource(id = R.drawable.level1),
+                    painter = painterResource(data.image),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -137,5 +161,6 @@ private fun LevelSelectorScreenPreview() {
 class LevelData(
     val name: String,
     val id: Int,
-    val metadata: String
+    val metadata: String,
+    val image: Int
 )

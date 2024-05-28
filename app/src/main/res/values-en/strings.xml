@@ -31,4 +31,8 @@
     <string name="spanish">Spanish</string>
     <string name="game_over">Game Over</string>
     <string name="levels_passed">Levels Passed</string>
+    <string name="first_level_dodge_the_falling_blocks">First level: Dodge the falling blocks</string>
+    <string name="second_level_break_the_walls">Second level: Break the walls</string>
+    <string name="third_level_remove_the_cubes">Third level: Remove the cubes</string>
+    <string name="fourth_level">Fourth level: Coming soon</string>
 </resources>

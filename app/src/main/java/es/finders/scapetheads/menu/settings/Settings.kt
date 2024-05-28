@@ -46,7 +46,6 @@ fun SettingsScreen(
     onTheme: (isDark: Boolean) -> Unit,
     preferencesThemeFlow: Flow<Boolean>
 ) {
-    // TODO: Finish settings screen
     Box(
         modifier,
         contentAlignment = Alignment.Center,

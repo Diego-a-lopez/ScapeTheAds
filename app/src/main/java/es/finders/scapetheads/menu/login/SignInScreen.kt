@@ -48,7 +48,6 @@ fun SignInScreen(
     ) {
         Logo()
         Spacer(Modifier.size(100.dp))
-        // TODO: Add login via email/password and/or anonymous
         /*
         TextInput(
             email,
