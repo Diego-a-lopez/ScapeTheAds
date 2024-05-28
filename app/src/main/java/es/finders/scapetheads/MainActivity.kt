@@ -416,11 +416,6 @@ class MainActivity : ComponentActivity() {
                                         }
                                         navController.popBackStack()
                                     }
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "English",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 },
                                 onSpanish = {
                                     lifecycleScope.launch {
@@ -429,11 +424,6 @@ class MainActivity : ComponentActivity() {
                                         }
                                         navController.popBackStack()
                                     }
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Spanish",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 },
                                 preferencesLanguageFlow = preferencesLanguageFlow,
                                 onVolume = { volume ->
@@ -442,11 +432,6 @@ class MainActivity : ComponentActivity() {
                                             settings[PreferencesKeys.VOLUME_KEY] = volume
                                         }
                                     }
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Volume changed to $volume%",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 },
                                 preferencesVolumeFlow = preferencesVolumeFlow,
                                 onTheme = { isDark ->
