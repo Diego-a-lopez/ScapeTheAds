@@ -62,9 +62,9 @@ import es.finders.scapetheads.services.unity.UnityBridge
 import es.finders.scapetheads.ui.theme.ScapeTheAddsTheme
 import es.finders.scapetheads.ui.utils.BasicBackground
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -76,7 +76,6 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
-
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
     private lateinit var mediaPlayer: MediaPlayer
@@ -85,8 +84,8 @@ class MainActivity : ComponentActivity() {
         val LANGUAGE_KEY = stringPreferencesKey("language")
         val VOLUME_KEY = intPreferencesKey("volume")
         val THEME_KEY = booleanPreferencesKey("theme")
+        val INITIALIZED_KEY = booleanPreferencesKey("initialized")
     }
-
 
     private val googleAuthUiClient by lazy {
         GoogleAuthClient(
@@ -136,11 +135,16 @@ class MainActivity : ComponentActivity() {
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 
-    suspend fun initiateDataStore() {
-        applicationContext.dataStore.edit { settings ->
-            settings[PreferencesKeys.LANGUAGE_KEY] = "English"
-            settings[PreferencesKeys.VOLUME_KEY] = 50
-            settings[PreferencesKeys.THEME_KEY] = false
+    private suspend fun checkAndInitializeDataStore() {
+        val preferences = applicationContext.dataStore.data.first()
+        val isInitialized = preferences[PreferencesKeys.INITIALIZED_KEY] ?: false
+        if (!isInitialized) {
+            applicationContext.dataStore.edit { settings ->
+                settings[PreferencesKeys.LANGUAGE_KEY] = "en"
+                settings[PreferencesKeys.VOLUME_KEY] = 50
+                settings[PreferencesKeys.THEME_KEY] = false
+                settings[PreferencesKeys.INITIALIZED_KEY] = true
+            }
         }
     }
 
@@ -173,8 +177,9 @@ class MainActivity : ComponentActivity() {
             androidContext(this@MainActivity)
             modules(appModule)
         }
-        runBlocking {
-            initiateDataStore()
+
+        lifecycleScope.launch {
+            checkAndInitializeDataStore()
         }
 
         var scoreMode: String = getString(R.string.local_scores)
@@ -390,7 +395,7 @@ class MainActivity : ComponentActivity() {
                         //Flow variable to the settings datastore to read is values  and pass them to the settings screen
                         val preferencesLanguageFlow: Flow<String> =
                             dataStore.data.map { preferences ->
-                                preferences[PreferencesKeys.LANGUAGE_KEY] ?: "English"
+                                preferences[PreferencesKeys.LANGUAGE_KEY] ?: "en"
                             }
                         val preferencesVolumeFlow: Flow<Int> = dataStore.data.map { preferences ->
                             preferences[PreferencesKeys.VOLUME_KEY] ?: 50
