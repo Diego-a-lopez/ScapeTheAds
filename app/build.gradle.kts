@@ -62,6 +62,7 @@ dependencies {
     //Firebase
     implementation("com.google.firebase:firebase-firestore:24.11.1")
     implementation("androidx.compose.material:material:1.2.0")
+    implementation(files("./libs/game.aar"))
 
     //Room
     val room_version = "2.6.1"

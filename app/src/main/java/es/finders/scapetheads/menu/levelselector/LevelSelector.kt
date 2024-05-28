@@ -48,8 +48,8 @@ fun LevelSelectorScreen(
         LevelData(name = "1", id = 1, metadata = "First level: Dodge the falling blocks"),
         LevelData(name = "2", id = 2, metadata = "Second level: Coming soon"),
         LevelData(name = "3", id = 3, metadata = "Third level: Coming soon"),
-        LevelData(name = "4", id = 3, metadata = "Fourth level: Coming soon"),
-        LevelData(name = "5", id = 3, metadata = "Fifth level: Coming soon")
+        LevelData(name = "4", id = 4, metadata = "Fourth level: Coming soon"),
+        LevelData(name = "5", id = 5, metadata = "Fifth level: Coming soon")
     )
     Box(
         modifier,
