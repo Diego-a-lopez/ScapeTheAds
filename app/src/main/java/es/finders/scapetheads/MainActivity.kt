@@ -350,9 +350,9 @@ class MainActivity : ComponentActivity() {
                                 val message = JSONObject(gameState)
                                 when (message.getString("type")) {
                                     "InfiniteMode" -> {
-                                        val stage = message.getInt("stage")
-                                        val clearTime = message.getInt("clearTime")
-                                        val score = message.getInt("score")
+                                        val stage = message.getLong("stage")
+                                        val clearTime = message.getLong("clearTime")
+                                        val score = message.getLong("score")
                                         navController.navigate("game_over/$stage/$clearTime/$score")
                                     }
 
@@ -456,9 +456,9 @@ class MainActivity : ComponentActivity() {
                         // Infinite mode
                         composable("game_over/{stage}/{clearTime}/{score}",
                             arguments = listOf(
-                                navArgument("stage") { type = NavType.IntType },
-                                navArgument("clearTime") { type = NavType.IntType },
-                                navArgument("score") { type = NavType.IntType }
+                                navArgument("stage") { type = NavType.LongType },
+                                navArgument("clearTime") { type = NavType.LongType },
+                                navArgument("score") { type = NavType.LongType }
                             )) { backStackEntry ->
                             val stage = backStackEntry.arguments?.getLong("stage") ?: 0
                             val clearTime = backStackEntry.arguments?.getLong("clearTime") ?: 0
