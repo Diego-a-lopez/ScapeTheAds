@@ -330,6 +330,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("level_selector")
                                 },
                                 onPlay = {
+                                    isUnityLaunching = true
                                     unityBridge.setInfinite()
                                     ContextCompat.startActivity(
                                         ctx,
