@@ -67,7 +67,7 @@ fun LevelSelectorScreen(
             name = "4",
             id = 4,
             metadata = stringResource(R.string.fourth_level),
-            image = R.drawable.level1
+            image = R.drawable.level4
         ),
     )
     Box(
