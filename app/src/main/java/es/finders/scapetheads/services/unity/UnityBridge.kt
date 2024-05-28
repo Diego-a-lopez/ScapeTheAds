@@ -2,12 +2,10 @@ package es.finders.scapetheads.services.unity
 
 import android.app.Service
 import android.content.Intent
-import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.json.JSONObject
 import java.io.IOException
 import java.io.InputStream
@@ -19,10 +17,11 @@ class UnityBridge : Service() {
 
     private val TAG = "UnityBridge"
     private val PORT = 8080
-
     private var mode = JSONObject().apply {
         put("gamemode", "infinite")
     }
+    private val _eventFlow = MutableStateFlow<String?>(null)
+    val eventFlow = _eventFlow.asStateFlow()
 
     fun getMode(): JSONObject {
         Log.d(TAG, "Retrieved mode")
@@ -38,7 +37,7 @@ class UnityBridge : Service() {
     fun setLevel(level: Int) {
         setMode(JSONObject().apply {
             put("gamemode", "level")
-            put("gamemode", level)
+            put("level", level)
         })
     }
 
@@ -46,28 +45,14 @@ class UnityBridge : Service() {
         Log.d(TAG, "Set mode")
         this.mode = newMode
     }
-    
-    override fun onCreate() {
-        super.onCreate()
-        Log.d(TAG, "Service onCreate")
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "Service onStartCommand")
-
+    init {
+        _eventFlow.value = null
         Thread { startServer() }.start()
-
-        return START_STICKY
-    }
-
-    private val binder = LocalBinder()
-
-    inner class LocalBinder : Binder() {
-        fun getService(): UnityBridge = this@UnityBridge
-    }
-
-    override fun onBind(intent: Intent): IBinder {
-        return binder
     }
 
     private fun startServer() {
@@ -107,16 +92,8 @@ class UnityBridge : Service() {
         return String(buffer, 0, bytesRead)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun handleData(data: String) {
-        GlobalScope.launch {
-            println(data) // TODO: Finish
-            // If infinite mode score
-            // TODO: Store in local room score
-            // TODO: Send to firestore data if highscore > current user highscore
-            // If level
-            // TODO: Update in room level completion
-        }
+        _eventFlow.value = data
     }
 
     override fun onDestroy() {

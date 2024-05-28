@@ -1,17 +1,11 @@
 package es.finders.scapetheads.menu.login
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,14 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import es.finders.scapetheads.R
 import es.finders.scapetheads.services.auth.SignInState
 import es.finders.scapetheads.ui.utils.Logo
+import es.finders.scapetheads.ui.utils.SignInButton
 
 @Composable
 fun SignInScreen(
@@ -57,7 +48,6 @@ fun SignInScreen(
     ) {
         Logo()
         Spacer(Modifier.size(100.dp))
-        // TODO: Add login via email/password and/or anonymous
         /*
         TextInput(
             email,
@@ -87,26 +77,7 @@ fun SignInScreen(
         Spacer(Modifier.size(16.dp))
         */
         // Text(text = stringResource(R.string.or))
-        Button(
-            onClick = onSignInClick,
-            modifier = Modifier
-                .padding(start = 4.dp, end = 4.dp),
-            shape = RoundedCornerShape(6.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
-                contentColor = Color.White
-            )
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_logo_google),
-                contentDescription = ""
-            )
-            Text(
-                text = stringResource(R.string.sign_in_with_google),
-                modifier = Modifier.padding(6.dp)
-            )
-        }
-
+        SignInButton(onClick = onSignInClick)
         /*Spacer(Modifier.size(16.dp))
         ButtonItem(
             text = stringResource(R.string.exit), onExit, Modifier

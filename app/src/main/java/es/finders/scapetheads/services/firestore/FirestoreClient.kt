@@ -7,7 +7,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.finders.scapetheads.services.APIService.HighScore
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.Instant.now
+import java.util.Date
+import java.util.Locale
 
 class FirestoreClient {
 
@@ -47,12 +51,19 @@ class FirestoreClient {
                 val highScores: MutableList<HighScore> = mutableListOf()
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
-                    val highScore = HighScore(
-                        document.data.get("nickname").toString(),
-                        document.data.get("date").toString(),
-                        document.data.get("score").toString(),
-                        document.data.get("time").toString()
-                    )
+                    val highScore = document.data.let { data ->
+                        val nickname = data["nickname"].toString()
+                        val dateEpoch = data["date"] as? Long
+                        val date = dateEpoch?.let {
+                            val date = Date.from(Instant.ofEpochSecond(it))
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            dateFormat.format(date)
+                        } ?: ""
+                        val score = data["score"].toString()
+                        val time = data["time"].toString()
+
+                        HighScore(nickname, date, score, time)
+                    }
                     highScores.add(highScore)
                 }
                 callback(highScores)

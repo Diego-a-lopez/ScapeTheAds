@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +46,6 @@ fun SettingsScreen(
     onTheme: (isDark: Boolean) -> Unit,
     preferencesThemeFlow: Flow<Boolean>
 ) {
-    // TODO: Finish settings screen
     Box(
         modifier,
         contentAlignment = Alignment.Center,
@@ -129,10 +127,13 @@ fun BottomButtonsSection(
         Logo(modifier = Modifier.align(Alignment.CenterHorizontally))
         LabeledSetting(stringResource(R.string.language))
         LanguageSettings(ctx, onSpanish, onEnglish, preferencesLanguageFlow)
+
+
         Spacer(modifier = Modifier.height(16.dp))
         LabeledSetting(stringResource(R.string.volume))
+
         VolumeSettings(ctx, onVolume, preferencesVolumeFlow)
-        Spacer(modifier = Modifier.height(16.dp))
+        /*Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.padding(end = 32.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +141,7 @@ fun BottomButtonsSection(
         ) {
             LabeledSetting(stringResource(R.string.theme))
             ThemeSettings(ctx, onTheme, preferencesThemeFlow)
-        }
+        }*/
         //Spacer(modifier = Modifier.width(16.dp))
         //ThemeSettings(ctx, onTheme, preferencesThemeFlow)
     }
@@ -162,8 +163,7 @@ fun LanguageSettings(
     onEnglish: () -> Unit,
     preferencesLanguageFlow: Flow<String>
 ) {
-    // TODO: actually change language
-    val languageState = preferencesLanguageFlow.collectAsState(initial = "English")
+    val languageState by preferencesLanguageFlow.collectAsState(initial = "en")
     val buttonModifier = Modifier
         .padding(vertical = 8.dp)
         .fillMaxWidth()
@@ -173,14 +173,21 @@ fun LanguageSettings(
             .padding(horizontal = 16.dp)
             .padding(vertical = 8.dp),
     ) {
-        ButtonItem("English", {
-            onEnglish()
-        }, buttonModifier)
-        ButtonItem("Spanish", {
-            onSpanish()
-        }, buttonModifier)
+        ButtonItem(
+            text = stringResource(R.string.english),
+            onClick = { onEnglish() },
+            modifier = buttonModifier,
+            enabled = languageState != "en"
+        )
+        ButtonItem(
+            text = stringResource(R.string.spanish),
+            onClick = { onSpanish() },
+            modifier = buttonModifier,
+            enabled = languageState != "es"
+        )
     }
 }
+
 
 /*
 @Composable
@@ -211,22 +218,25 @@ fun LanguageSettings(ctx: Context) {
 fun VolumeSettings(
     ctx: Context,
     onVolume: (newVolumeValue: Int) -> Unit,
-    preferencesVolumeFlow: Flow<Int>
+    preferencesVolumeFlow: Flow<Int>,
 ) {
-    val volumeState by preferencesVolumeFlow.collectAsState(initial = 50)
+    val colorScheme = MaterialTheme.colorScheme
+    ScapeTheAddsTheme {
+        val volumeState by preferencesVolumeFlow.collectAsState(initial = 50)
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Slider(
-            value = volumeState.toFloat() / 100,
-            onValueChange = {
-                onVolume((it * 100).toInt())
-            }
-        )
-        Text(text = volumeState.toFloat().toString())
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Slider(
+                value = volumeState.toFloat() / 100,
+                onValueChange = {
+                    onVolume((it * 100).toInt())
+                }
+            )
+            Text(text = volumeState.toFloat().toString(), color = colorScheme.primary)
+        }
+
     }
-
 }
 
 @Composable

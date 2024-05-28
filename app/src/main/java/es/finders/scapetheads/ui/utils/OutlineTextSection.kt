@@ -26,8 +26,9 @@ fun OutlineTextSection(
     outlineTextColor: Color = Color.Black, // default color for outline text
     textSize: TextUnit = MaterialTheme.typography.displaySmall.fontSize, // default size
     contentAlignment: Alignment = Alignment.Center,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = contentAlignment
@@ -38,7 +39,7 @@ fun OutlineTextSection(
             textAlign = textAlign,
             style = LocalTextStyle.current.merge(
                 TextStyle(
-                    color = textColor,
+                    color = colorScheme.primary,
                     fontSize = textSize
                 )
             ),
@@ -49,7 +50,7 @@ fun OutlineTextSection(
             textAlign = textAlign,
             style = LocalTextStyle.current.merge(
                 TextStyle(
-                    color = outlineTextColor,
+                    color = colorScheme.tertiary,
                     fontSize = textSize,
                     drawStyle = Stroke(width = 4f, join = StrokeJoin.Round)
                 )
