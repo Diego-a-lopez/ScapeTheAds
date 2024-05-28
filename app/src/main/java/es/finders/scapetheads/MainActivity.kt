@@ -315,8 +315,8 @@ class MainActivity : ComponentActivity() {
                                             getString(R.string.signed_out),
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        finishAffinity()
                                     }
-                                    finishAffinity()
                                 },
                                 onHighscore = {
                                     scoreMode = getString(R.string.local_scores)
@@ -342,7 +342,6 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("settings")
                                 }
                             )
-
                             val sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE)
                             val gameResult = sharedPreferences.getString("gameResult", null)
                             if (gameResult != null) {
