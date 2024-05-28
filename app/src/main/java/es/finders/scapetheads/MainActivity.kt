@@ -79,6 +79,7 @@ class MainActivity : ComponentActivity() {
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
     private lateinit var mediaPlayer: MediaPlayer
+    private var isUnityLaunching: Boolean = false
 
     private object PreferencesKeys {
         val LANGUAGE_KEY = stringPreferencesKey("language")
@@ -538,14 +539,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (mediaPlayer.isPlaying) {
+        if (!isUnityLaunching && mediaPlayer.isPlaying) {
             mediaPlayer.pause()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        mediaPlayer.start()
+        if (!isUnityLaunching) {
+            mediaPlayer.start()
+        }
+        isUnityLaunching = false
     }
 
 }
