@@ -307,6 +307,7 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(
                                 onExit = {
                                     lifecycleScope.launch {
+                                        mediaPlayer.release()
                                         googleAuthUiClient.signOut()
                                         Toast.makeText(
                                             applicationContext,
